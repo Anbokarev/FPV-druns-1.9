@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#05080f">
-<title>FPV DRONE v1.9</title>
+<title>FPV DRONE v2.0</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;background:#05080f;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;-webkit-user-select:none;user-select:none;touch-action:none;overscroll-behavior:none;position:fixed;inset:0}
@@ -262,7 +262,7 @@ body.vr-mode .pad.left{opacity:.25}
 
 <div id="menu">
   <h1 id="menuTitle">FPV DRONE</h1>
-  <div class="version" id="menuVersion">РЕЛИЗ v1.9</div>
+  <div class="version" id="menuVersion">РЕЛИЗ v2.0</div>
   <div class="sub" id="menuSub">ГОРОДСКАЯ ГОНКА</div>
 
   <div id="menuOpts">
@@ -362,22 +362,13 @@ body.vr-mode .pad.left{opacity:.25}
       <p><b>Левый блок</b> — газ и рыскание. <b>Правый блок</b> — тангаж и крен.</p>
       <p><b>Клавиатура:</b> <span class="key">WASD</span> <span class="key">QE</span> <span class="key">Shift/Ctrl</span> <span class="key">ПРОБЕЛ</span> <span class="key">F</span> <span class="key">V</span></p>
       <h3>🥽 VR-РЕЖИМ</h3>
-      <p>Вставь телефон в очки, нажми <b>🥽 VR РЕЖИМ</b> в меню. Управление головой:</p>
-      <ul>
-        <li><b>Наклон вперёд</b> → полёт вперёд</li>
-        <li><b>Наклон вбок</b> → крен</li>
-        <li><b>Поворот головы</b> → рыскание</li>
-        <li><b>Громкость вверх / 1 тап</b> → огонь</li>
-        <li><b>Громкость вниз</b> → способность</li>
-        <li><b>3 тапа</b> → рекалибровка</li>
-        <li><b>2 тапа</b> → выход из VR</li>
-      </ul>
+      <p>Нужен <b>HTTPS</b> (GitHub Pages / Netlify). Управление головой. Если оси сбиты — кнопка <b>🔀 ОСИ</b> в верхнем правом углу.</p>
       <h3>🎯 Режимы</h3>
-      <p><b>🏁 ГОНКА</b> — пролети через кольца. <b>💥 РАЗРУШЕНИЕ</b> — сбей 5 целей. <b>📦 ДОСТАВКА</b> — привези груз.</p>
+      <p><b>🏁 ГОНКА</b> · <b>💥 РАЗРУШЕНИЕ</b> · <b>📦 ДОСТАВКА</b></p>
       <h3>⭐ МАСТЕРСТВО</h3>
-      <p>5 уровней на каждый дрон. Опыт даётся за полёты, ворота, разрушения, доставку и краши. Можно отключить кнопкой в меню.</p>
+      <p>5 уровней на каждый дрон. Можно отключить кнопкой в меню.</p>
       <h3>⚡ Способности</h3>
-      <p>Клавиша <b>F</b> или кнопка ⚡ на мобильной. Открывается на 3 уровне мастерства.</p>
+      <p>Клавиша <b>F</b>. Открывается на 3 уровне мастерства.</p>
     </div>
   </div>
 </div>
@@ -473,7 +464,7 @@ var DRONES = [
 var MASTERY_LEVELS = [
   { id:0, name:'НОВИЧОК',   xp:0,    statMul:1.00, ability:false, color:0x808080, desc:'Стандартная комплектация' },
   { id:1, name:'ЛЮБИТЕЛЬ',  xp:200,  statMul:1.05, ability:false, color:0x40a0ff, desc:'+5% · LED-детали' },
-  { id:2, name:'ОПЫТНЫЙ',   xp:600,  statMul:1.10, ability:true,  color:0x00e5ff, desc:'+10% · новые детали корпуса' },
+  { id:2, name:'ОПЫТНЫЙ',   xp:600,  statMul:1.10, ability:true,  color:0x00e5ff, desc:'+10% · новые детали' },
   { id:3, name:'ВЕТЕРАН',   xp:1400, statMul:1.18, ability:true,  color:0x40ff80, desc:'+18% · доп. двигатели' },
   { id:4, name:'МАСТЕР',    xp:2800, statMul:1.30, ability:true,  color:0xffd040, desc:'+30% · максимальный обвес' }
 ];
@@ -485,7 +476,7 @@ var ABILITIES = {
   racer:    { name:'КВАНТОВЫЙ ПРЫЖОК', cd:10, dur:0.4, key:'F', desc:'Телепорт 40м', color:0xff00ff },
   mini:     { name:'НЕВИДИМОСТЬ',      cd:18, dur:4.0, key:'F', desc:'Прозрачность 4с', color:0x00ff80 },
   glider:   { name:'ТЕРМАЛЬНЫЙ ПОТОК', cd:20, dur:3.0, key:'F', desc:'Набор высоты', color:0xa0e0ff },
-  delta:    { name:'ЗВУКОВОЙ УДАР',    cd:16, dur:1.0, key:'F', desc:'Уничтожает цели вокруг', color:0xff3060 },
+  delta:    { name:'ЗВУКОВОЙ УДАР',    cd:16, dur:1.0, key:'F', desc:'Уничтожает цели', color:0xff3060 },
   jet:      { name:'ФОРСАЖ',           cd:22, dur:3.0, key:'F', desc:'Двойная тяга 3с', color:0xff8060 }
 };
 
@@ -542,7 +533,7 @@ function showMasteryUpNotification(droneId, level) {
     '<div style="font-size:16px;font-weight:800;letter-spacing:3px;color:' + colStr + '">' + dron.name + '</div>' +
     '<div style="font-size:22px;font-weight:800;letter-spacing:5px;margin:10px 0;color:' + colStr + '">' + lvlInfo.name + '</div>' +
     '<div style="font-size:11px;opacity:.75;line-height:1.6">' + lvlInfo.desc + '</div>' +
-    (lvlInfo.ability && ab ? '<div style="margin-top:14px;padding:10px 16px;background:rgba(0,180,255,.15);border:1px solid #' + ab.color.toString(16).padStart(6,'0') + ';border-radius:10px"><div style="font-size:10px;letter-spacing:2px;opacity:.6">СПОСОБНОСТЬ [' + ab.key + ']</div><div style="font-size:14px;font-weight:800;letter-spacing:2px;color:#' + ab.color.toString(16).padStart(6,'0') + '">' + ab.name + '</div></div>' : '');
+    (lvlInfo.ability && ab ? '<div style="margin-top:14px;padding:10px 16px;background:rgba(0,180,255,.15);border:1px solid #' + ab.color.toString(16).padStart(6,'0') + ';border-radius:10px"><div style="font-size:14px;font-weight:800;letter-spacing:2px;color:#' + ab.color.toString(16).padStart(6,'0') + '">⚡ ' + ab.name + '</div></div>' : '');
   document.body.appendChild(toast);
   requestAnimationFrame(function() { toast.style.opacity = '1'; toast.style.transform = 'translate(-50%,-50%) scale(1)'; });
   setTimeout(function() { toast.style.opacity = '0'; toast.style.transform = 'translate(-50%,-50%) scale(0.9)'; setTimeout(function() { document.body.removeChild(toast); }, 500); }, 3200);
@@ -612,9 +603,9 @@ var playerData = { coins:0, unlockedSkins:['default'], selectedSkin:'default', t
 
 function loadPlayerData() {
   try {
-    var raw = localStorage.getItem('fpv_player_v19');
+    var raw = localStorage.getItem('fpv_player_v20');
+    if (!raw) raw = localStorage.getItem('fpv_player_v19');
     if (!raw) raw = localStorage.getItem('fpv_player_v18');
-    if (!raw) raw = localStorage.getItem('fpv_player_v17');
     if (!raw) raw = localStorage.getItem('fpv_player');
     if (raw) {
       var d = JSON.parse(raw);
@@ -631,7 +622,7 @@ function loadPlayerData() {
     }
   } catch (e) {}
 }
-function savePlayerData() { try { localStorage.setItem('fpv_player_v19', JSON.stringify(playerData)); } catch (e) {} }
+function savePlayerData() { try { localStorage.setItem('fpv_player_v20', JSON.stringify(playerData)); } catch (e) {} }
 function awardCoins(n) { if (n <= 0) return; playerData.coins += n; savePlayerData(); updateCoinsUI(); }
 function updateCoinsUI() {
   var c = document.getElementById('vCoins'); if (c) c.textContent = String(playerData.coins);
@@ -715,15 +706,106 @@ var builtKey = '';
 var droneMesh = null, droneProps = [], droneIridMats = [], droneExhausts = [];
 
 // ============================================================
-// VR
+// VR-РЕЖИМ
 // ============================================================
+var vrAxisVariant = 0;
+try { vrAxisVariant = parseInt(localStorage.getItem('fpv_vr_axis') || '0', 10) || 0; } catch(e) { vrAxisVariant = 0; }
+
 var vr = {
   active: false, calibrated: false,
-  baseline: { alpha: 0, beta: 0, gamma: 0 },
+  mode: 'none',
+  baseline: { pitch: 0, roll: 0, yaw: 0 },
   headInput: { pitch: 0, roll: 0, yaw: 0 },
-  hasOrientation: false, cameraL: null, cameraR: null,
-  tapCount: 0, tapTimer: null, lastTapTime: 0, ipd: 0.032
+  raw: { alpha: 0, beta: 0, gamma: 0 },
+  hasOrientation: false,
+  cameraL: null, cameraR: null,
+  tapCount: 0, tapTimer: null, lastTapTime: 0,
+  ipd: 0.032,
+  calibSamples: [],
+  debugEl: null, lastDebugUpdate: 0,
+  touchId: null, touchStartX: 0, touchStartY: 0, touchX: 0, touchY: 0, touchDragged: false
 };
+
+function getScreenAngle() {
+  if (screen.orientation && typeof screen.orientation.angle === 'number') return screen.orientation.angle;
+  if (typeof window.orientation === 'number') return window.orientation;
+  return 0;
+}
+function isSecure() {
+  return location.protocol === 'https:' ||
+    location.hostname === 'localhost' ||
+    location.hostname === '127.0.0.1';
+}
+function screenToUserAngles(alpha, beta, gamma) {
+  var v = vrAxisVariant % 4;
+  if (v === 0) return { pitch: beta, roll: gamma, yaw: alpha };
+  if (v === 1) return { pitch: gamma, roll: -beta, yaw: alpha };
+  if (v === 2) return { pitch: -beta, roll: -gamma, yaw: alpha };
+  if (v === 3) return { pitch: -gamma, roll: beta, yaw: alpha };
+  return { pitch: beta, roll: gamma, yaw: alpha };
+}
+function cycleVRAxis() {
+  vrAxisVariant = (vrAxisVariant + 1) % 4;
+  try { localStorage.setItem('fpv_vr_axis', String(vrAxisVariant)); } catch (e) {}
+  vr.calibrated = false;
+  vr.calibSamples = [];
+  vr.headInput.pitch = 0; vr.headInput.roll = 0; vr.headInput.yaw = 0;
+  var calEl = document.getElementById('vrCalibrating');
+  if (calEl) calEl.style.display = 'block';
+  var names = ['A (по умолчанию)', 'B (поворот 90°)', 'C (поворот 180°)', 'D (поворот 270°)'];
+  toastMsg('ОСИ: ' + names[vrAxisVariant]);
+  var mh = document.getElementById('vrModeHint');
+  if (mh) mh.textContent = 'ОСИ: ' + names[vrAxisVariant];
+}
+function onDeviceOrientation(e) {
+  if (!vr.active || vr.mode === 'touch') return;
+  if (e.alpha === null && e.beta === null && e.gamma === null) return;
+  vr.hasOrientation = true;
+  vr.raw.alpha = e.alpha || 0; vr.raw.beta = e.beta || 0; vr.raw.gamma = e.gamma || 0;
+  var u = screenToUserAngles(vr.raw.alpha, vr.raw.beta, vr.raw.gamma);
+  if (!vr.calibrated) {
+    vr.calibSamples.push(u);
+    if (vr.calibSamples.length >= 8) {
+      var pS = 0, rS = 0, yS = 0;
+      for (var i = 0; i < vr.calibSamples.length; i++) {
+        pS += vr.calibSamples[i].pitch; rS += vr.calibSamples[i].roll; yS += vr.calibSamples[i].yaw;
+      }
+      vr.baseline.pitch = pS / vr.calibSamples.length;
+      vr.baseline.roll = rS / vr.calibSamples.length;
+      vr.baseline.yaw = yS / vr.calibSamples.length;
+      vr.calibrated = true;
+      var calEl = document.getElementById('vrCalibrating');
+      if (calEl) calEl.style.display = 'none';
+      toastMsg('VR готово · наклоняй голову');
+    }
+    updateVRDebug();
+    return;
+  }
+  var dPitch = u.pitch - vr.baseline.pitch;
+  var dRoll = u.roll - vr.baseline.roll;
+  var dYaw = u.yaw - vr.baseline.yaw;
+  while (dPitch > 180) dPitch -= 360; while (dPitch < -180) dPitch += 360;
+  while (dRoll > 180) dRoll -= 360; while (dRoll < -180) dRoll += 360;
+  while (dYaw > 180) dYaw -= 360; while (dYaw < -180) dYaw += 360;
+  var DZ = 3;
+  function dz(v) { return Math.abs(v) > DZ ? (v - (v > 0 ? DZ : -DZ)) : 0; }
+  vr.headInput.pitch = clamp(dz(dPitch) / 30, -1, 1);
+  vr.headInput.roll = clamp(dz(dRoll) / 25, -1, 1);
+  vr.headInput.yaw = clamp(dz(dYaw) / 45, -1, 1);
+  updateVRDebug();
+}
+function updateVRDebug() {
+  if (!vr.debugEl) return;
+  var now = performance.now();
+  if (now - vr.lastDebugUpdate < 100) return;
+  vr.lastDebugUpdate = now;
+  if (vr.mode === 'touch') {
+    vr.debugEl.textContent = 'ТАЧ | P=' + vr.headInput.pitch.toFixed(2) + ' R=' + vr.headInput.roll.toFixed(2) + ' Y=' + vr.headInput.yaw.toFixed(2);
+  } else {
+    var ang = getScreenAngle();
+    vr.debugEl.textContent = 'ANG=' + ang + ' | β=' + vr.raw.beta.toFixed(0) + ' γ=' + vr.raw.gamma.toFixed(0) + ' α=' + vr.raw.alpha.toFixed(0) + ' | P=' + vr.headInput.pitch.toFixed(2) + ' R=' + vr.headInput.roll.toFixed(2) + ' Y=' + vr.headInput.yaw.toFixed(2);
+  }
+}
 function initVRCameras() {
   if (vr.cameraL && vr.cameraR) return;
   vr.cameraL = new THREE.PerspectiveCamera(88, 1, 0.15, 2200);
@@ -731,30 +813,12 @@ function initVRCameras() {
   scene.add(vr.cameraL); scene.add(vr.cameraR);
 }
 function requestOrientationPermission(cb) {
-  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-    DeviceOrientationEvent.requestPermission().then(function (r) { cb(r === 'granted'); }).catch(function () { cb(false); });
-  } else cb(true);
-}
-function onDeviceOrientation(e) {
-  if (!vr.active) return;
-  if (e.alpha === null && e.beta === null && e.gamma === null) return;
-  vr.hasOrientation = true;
-  var alpha = e.alpha || 0, beta = e.beta || 0, gamma = e.gamma || 0;
-  if (!vr.calibrated) {
-    vr.baseline.alpha = alpha; vr.baseline.beta = beta; vr.baseline.gamma = gamma;
-    vr.calibrated = true;
-    var calEl = document.getElementById('vrCalibrating');
-    if (calEl) calEl.style.display = 'none';
-    return;
+  if (typeof DeviceOrientationEvent === 'undefined') { cb('no-api'); return; }
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission().then(function (r) { cb(r === 'granted' ? null : 'denied'); }).catch(function () { cb('error'); });
+  } else {
+    cb(null);
   }
-  var dAlpha = alpha - vr.baseline.alpha;
-  var dBeta = beta - vr.baseline.beta;
-  var dGamma = gamma - vr.baseline.gamma;
-  while (dAlpha > 180) dAlpha -= 360; while (dAlpha < -180) dAlpha += 360;
-  if (dBeta > 180) dBeta -= 360; if (dBeta < -180) dBeta += 360;
-  vr.headInput.pitch = clamp(dBeta / 30, -1, 1);
-  vr.headInput.roll  = clamp(dGamma / 25, -1, 1);
-  vr.headInput.yaw   = clamp(dAlpha / 45, -1, 1);
 }
 var _vrRight = new THREE.Vector3();
 function updateVRCameras() {
@@ -769,31 +833,118 @@ function updateVRCameras() {
   vr.cameraL.fov = fov; vr.cameraR.fov = fov;
   vr.cameraL.updateProjectionMatrix(); vr.cameraR.updateProjectionMatrix();
 }
-function enterVR() {
-  if (vr.active) return;
-  if (typeof DeviceOrientationEvent === 'undefined') { toastMsg('Гироскоп не поддерживается', true); return; }
-  requestOrientationPermission(function (granted) {
-    if (!granted) { toastMsg('Нет доступа к гироскопу', true); return; }
-    initVRCameras();
-    vr.active = true; vr.calibrated = false;
-    document.getElementById('vrOverlay').classList.remove('hidden');
-    document.getElementById('vrCalibrating').style.display = 'block';
-    document.body.classList.add('vr-mode');
-    document.getElementById('hud').classList.add('hidden');
-    try {
-      if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen({ navigationUI: 'hide' });
-      if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {});
-    } catch (e) {}
+function setupVRUI() {
+  var overlay = document.getElementById('vrOverlay');
+  if (!overlay) return;
+  if (!vr.debugEl) {
+    var d = document.createElement('div');
+    d.id = 'vrDebug';
+    d.style.cssText = 'position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-size:9px;font-family:monospace;color:#7cf7c0;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:4px;z-index:28;letter-spacing:1px;white-space:nowrap';
+    d.textContent = 'ЗАПУСК...';
+    overlay.appendChild(d);
+    vr.debugEl = d;
+  }
+  if (!document.getElementById('vrRecalBtn')) {
+    var rb = document.createElement('button');
+    rb.id = 'vrRecalBtn';
+    rb.textContent = '⟳ РЕКАЛИБРОВКА';
+    rb.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:30;pointer-events:auto;padding:6px 14px;border-radius:9px;border:1px solid rgba(255,200,80,.7);background:rgba(8,18,32,.8);color:#ffd040;font-family:inherit;font-size:10px;letter-spacing:2px;font-weight:700';
+    rb.addEventListener('pointerdown', function(e) { e.stopPropagation(); });
+    rb.addEventListener('click', function(e) { e.stopPropagation(); recalibrateVR(); });
+    overlay.appendChild(rb);
+  }
+  if (!document.getElementById('vrAxisBtn')) {
+    var ab = document.createElement('button');
+    ab.id = 'vrAxisBtn';
+    ab.textContent = '🔀 ОСИ';
+    ab.style.cssText = 'position:absolute;top:8px;right:8px;z-index:30;pointer-events:auto;padding:6px 14px;border-radius:9px;border:1px solid rgba(0,220,255,.7);background:rgba(8,18,32,.8);color:#7fd8ff;font-family:inherit;font-size:10px;letter-spacing:2px;font-weight:700';
+    ab.addEventListener('pointerdown', function(e) { e.stopPropagation(); });
+    ab.addEventListener('click', function(e) { e.stopPropagation(); cycleVRAxis(); });
+    overlay.appendChild(ab);
+  }
+  if (!document.getElementById('vrModeHint')) {
+    var mh = document.createElement('div');
+    mh.id = 'vrModeHint';
+    mh.style.cssText = 'position:absolute;top:8px;left:8px;z-index:28;font-size:9px;letter-spacing:1.5px;color:#8fd4ff;background:rgba(0,0,0,.55);padding:4px 9px;border-radius:5px;pointer-events:none';
+    mh.textContent = 'РЕЖИМ: ...';
+    overlay.appendChild(mh);
+  }
+}
+function setVRMode(mode) {
+  vr.mode = mode;
+  var mh = document.getElementById('vrModeHint');
+  if (mh) {
+    if (mode === 'gyro') { mh.textContent = 'РЕЖИМ: ГИРОСКОП · наклоняй голову'; mh.style.color = '#7cf7c0'; }
+    else if (mode === 'touch') { mh.textContent = 'РЕЖИМ: ТАЧ · тяни пальцем для наклона'; mh.style.color = '#ffd040'; }
+  }
+  if (vr.debugEl) vr.debugEl.textContent = mode === 'touch' ? 'ТАЧ-РЕЖИМ' : 'ЖДУ ДАННЫЕ ГИРОСКОПА...';
+}
+function recalibrateVR() {
+  vr.calibrated = false;
+  vr.calibSamples = [];
+  vr.headInput.pitch = 0; vr.headInput.roll = 0; vr.headInput.yaw = 0;
+  vr.touchX = 0; vr.touchY = 0;
+  var calEl = document.getElementById('vrCalibrating');
+  if (calEl) calEl.style.display = 'block';
+  toastMsg('Держи ровно 2 сек...');
+}
+function enterVRWithMode(mode) {
+  initVRCameras();
+  setupVRUI();
+  vr.active = true;
+  vr.calibrated = false;
+  vr.calibSamples = [];
+  vr.hasOrientation = false;
+  document.getElementById('vrOverlay').classList.remove('hidden');
+  document.getElementById('vrCalibrating').style.display = mode === 'gyro' ? 'block' : 'none';
+  document.body.classList.add('vr-mode');
+  document.getElementById('hud').classList.add('hidden');
+  try {
+    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+    if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {});
+  } catch (e) {}
+  setVRMode(mode);
+  if (mode === 'gyro') {
     window.addEventListener('deviceorientation', onDeviceOrientation, true);
-    setTimeout(function () { if (vr.active && !vr.hasOrientation) toastMsg('Гироскоп не отвечает', true); }, 3000);
-    resizeVRCameras();
-    if (state === 'menu') startGame();
+    window.addEventListener('deviceorientationabsolute', onDeviceOrientation, true);
+    setTimeout(function () {
+      if (vr.active && !vr.hasOrientation) {
+        toastMsg('Гироскоп молчит — переключаю на тач', true);
+        window.removeEventListener('deviceorientation', onDeviceOrientation, true);
+        window.removeEventListener('deviceorientationabsolute', onDeviceOrientation, true);
+        setVRMode('touch');
+        vr.calibrated = true;
+      }
+    }, 2500);
+  } else {
+    vr.calibrated = true;
+  }
+  resizeVRCameras();
+  if (state === 'menu') startGame();
+}
+function enterVR() {
+  if (!isSecure()) {
+    toastMsg('VR требует HTTPS · включаю тач-режим', true);
+    enterVRWithMode('touch');
+    return;
+  }
+  if (typeof DeviceOrientationEvent === 'undefined') {
+    toastMsg('Гироскопа нет · тач-режим', true);
+    enterVRWithMode('touch');
+    return;
+  }
+  requestOrientationPermission(function (err) {
+    if (err === 'denied') { toastMsg('Доступ отклонён · тач-режим', true); setTimeout(function() { enterVRWithMode('touch'); }, 800); return; }
+    if (err === 'no-api') { toastMsg('API нет · тач-режим', true); enterVRWithMode('touch'); return; }
+    if (err === 'error') { toastMsg('Ошибка доступа · тач-режим', true); enterVRWithMode('touch'); return; }
+    enterVRWithMode('gyro');
   });
 }
 function exitVR() {
   if (!vr.active) return;
   vr.active = false;
   window.removeEventListener('deviceorientation', onDeviceOrientation, true);
+  window.removeEventListener('deviceorientationabsolute', onDeviceOrientation, true);
   document.getElementById('vrOverlay').classList.add('hidden');
   document.body.classList.remove('vr-mode');
   document.getElementById('hud').classList.remove('hidden');
@@ -803,6 +954,7 @@ function exitVR() {
   } catch (e) {}
   input.pitch = 0; input.roll = 0; input.yaw = 0;
   vr.headInput.pitch = 0; vr.headInput.roll = 0; vr.headInput.yaw = 0;
+  vr.touchX = 0; vr.touchY = 0; vr.touchId = null;
   lastT = performance.now();
 }
 function resizeVRCameras() {
@@ -812,8 +964,42 @@ function resizeVRCameras() {
   vr.cameraL.aspect = halfW / h; vr.cameraR.aspect = halfW / h;
   vr.cameraL.updateProjectionMatrix(); vr.cameraR.updateProjectionMatrix();
 }
+function onVRTouchStart(e) {
+  if (!vr.active || vr.mode !== 'touch') return;
+  if (e.target && (e.target.id === 'vrRecalBtn' || e.target.id === 'vrAxisBtn')) return;
+  var t = e.touches ? e.touches[0] : e;
+  if (vr.touchId !== null) return;
+  vr.touchId = 'touch_' + (t.identifier !== undefined ? t.identifier : '0');
+  vr.touchStartX = t.clientX; vr.touchStartY = t.clientY;
+  vr.touchX = t.clientX; vr.touchY = t.clientY;
+  vr.touchDragged = false;
+}
+function onVRTouchMove(e) {
+  if (!vr.active || vr.mode !== 'touch' || vr.touchId === null) return;
+  var t = null;
+  if (e.touches) {
+    for (var i = 0; i < e.touches.length; i++) {
+      if ('touch_' + e.touches[i].identifier === vr.touchId) { t = e.touches[i]; break; }
+    }
+  }
+  if (!t) return;
+  var dx = t.clientX - vr.touchStartX;
+  var dy = t.clientY - vr.touchStartY;
+  if (Math.abs(dx) > 8 || Math.abs(dy) > 8) vr.touchDragged = true;
+  vr.headInput.pitch = clamp(dy / 200, -1, 1);
+  vr.headInput.yaw = clamp(dx / 260, -1, 1);
+  updateVRDebug();
+}
+function onVRTouchEnd(e) {
+  if (!vr.active || vr.mode !== 'touch') return;
+  if (vr.touchId === null) return;
+  var wasDrag = vr.touchDragged;
+  vr.touchId = null;
+  if (!wasDrag) onVRTap(e);
+}
 function onVRTap(e) {
   if (!vr.active) return;
+  if (e.target && (e.target.id === 'vrRecalBtn' || e.target.id === 'vrAxisBtn')) return;
   var now = performance.now();
   if (now - vr.lastTapTime < 500) vr.tapCount++; else vr.tapCount = 1;
   vr.lastTapTime = now;
@@ -821,7 +1007,7 @@ function onVRTap(e) {
   vr.tapTimer = setTimeout(function () {
     if (vr.tapCount === 1) fireProjectile();
     else if (vr.tapCount === 2) exitVR();
-    else if (vr.tapCount >= 3) { vr.calibrated = false; document.getElementById('vrCalibrating').style.display = 'block'; toastMsg('Калибровка...'); }
+    else if (vr.tapCount >= 3) recalibrateVR();
     vr.tapCount = 0;
   }, 520);
 }
@@ -844,7 +1030,7 @@ function renderVR() {
 }
 
 // ============================================================
-// КУБЫ ДРОНОВ (упрощённые, без деталей)
+// МОДЕЛИ ДРОНОВ
 // ============================================================
 function makeMotor(s, motorMat, darkMat, accentMat) {
   var g = new THREE.Group();
@@ -892,7 +1078,6 @@ function makeAntenna(s, darkMat, len) {
   var tip = new THREE.Mesh(sphGeo12, darkMat); tip.scale.setScalar(0.03 * s); tip.position.y = len * s; g.add(tip);
   return g;
 }
-
 function buildDroneMesh(skin, parentGroup, droneType) {
   parentGroup = parentGroup || scene;
   droneType = droneType || DRONES[0];
@@ -911,8 +1096,8 @@ function buildDroneMesh(skin, parentGroup, droneType) {
   var wingMat = new THREE.MeshStandardMaterial({ color: bodyHex, roughness: 0.35, metalness: 0.4, side: THREE.DoubleSide });
   var darkMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1e, roughness: 0.5, metalness: 0.5 });
   var screwMat = new THREE.MeshStandardMaterial({ color: 0xb0b0b8, roughness: 0.4, metalness: 0.9 });
-
   var props = [], exhausts = [];
+
   function addCopterNode(cx, cz, armLen, s, armIdx, opts) {
     opts = opts || {};
     var armAngle = Math.atan2(cz, cx);
@@ -1018,7 +1203,6 @@ function buildDroneMesh(skin, parentGroup, droneType) {
   }
   return { group: wrapper, props: props, iridMats: iridMats, exhausts: exhausts };
 }
-
 function disposeObject3D(obj) {
   obj.traverse(function (o) {
     if (o.geometry) try { o.geometry.dispose(); } catch (e) {}
@@ -1030,7 +1214,6 @@ function disposeObject3D(obj) {
 }
 function disposeGroupSafe(group) { while (group.children.length > 0) group.remove(group.children[0]); }
 
-// УНИКАЛЬНЫЕ АПГРЕЙДЫ
 function addMasteryUpgrade(droneId, lvl, dm, glowMat, auraMat, darkMat, accentMat, bodyMat, motorMat, propMat, screwMat, wingMat, lensMat, camBodyMat) {
   if (lvl < 1) return;
   if (droneId === 'jet') {
@@ -1128,7 +1311,6 @@ function addMasteryUpgrade(droneId, lvl, dm, glowMat, auraMat, darkMat, accentMa
     }
   }
 }
-
 function applySkin() {
   if (droneMesh) { scene.remove(droneMesh); disposeObject3D(droneMesh); droneMesh = null; }
   var skin = getSkinById(playerData.selectedSkin);
@@ -1169,7 +1351,9 @@ function updateIridescentMaterials(list) {
   }
 }
 
+// ============================================================
 // ТЕКСТУРЫ
+// ============================================================
 function makeBuildingTextures(seed, baseHex, winLit, winDark, winGlow, bw, bh, bd) {
   var rnd = mulberry32(seed);
   var COLS = 4, ROWS = 12, WIN_PX = 32;
@@ -1270,6 +1454,7 @@ function nearCourse(x, z, clearance) {
   }
   return false;
 }
+
 function buildPropAssets(th) {
   var pc = th.prop;
   var geo = {}, mat = {};
@@ -1286,10 +1471,6 @@ function buildPropAssets(th) {
   geo.cone1 = new THREE.ConeGeometry(2.8, 2.8, 11);
   geo.cone2 = new THREE.ConeGeometry(2.0, 2.5, 11);
   geo.cone3 = new THREE.ConeGeometry(1.3, 2.2, 11);
-  geo.leaf0 = new THREE.SphereGeometry(2.4, 12, 10);
-  geo.leaf1 = new THREE.SphereGeometry(1.9, 12, 10);
-  geo.leaf2 = new THREE.SphereGeometry(1.5, 12, 10);
-  geo.leaf3 = new THREE.SphereGeometry(1.15, 12, 10);
   mat.trunk = new THREE.MeshStandardMaterial({ color: pc.treeTrunk, roughness: 0.95 });
   mat.leaf = new THREE.MeshStandardMaterial({ color: pc.treeTop, roughness: 0.88 });
   mat.leaf2 = new THREE.MeshStandardMaterial({ color: pc.treeTop2, roughness: 0.88 });
@@ -1326,7 +1507,6 @@ function buildPropAssets(th) {
   return { geo: geo, mat: mat, carMats: carMats };
 }
 function cleanupProps() { propAssets = null; }
-
 function spawnLamp(x, z, rot) {
   var p = propAssets; var g = new THREE.Group();
   var b = new THREE.Mesh(p.geo.lampBase, p.mat.lampBase); b.position.y = 0.28; g.add(b);
@@ -1509,7 +1689,6 @@ function decorateBuilding(b, rnd, mats) {
   }
   rooftopGroup.add(g); return g;
 }
-
 function buildWorld() {
   var diff = DIFFS[selDiff], th = THEMES[selTheme];
   if (torusGeo) { torusGeo.dispose(); torusGeo = null; }
@@ -1649,9 +1828,7 @@ function updateObjectiveUI() {
   }
 }
 
-// ============================================================
 // ОСКОЛКИ / ВЗРЫВЫ / СНАРЯДЫ
-// ============================================================
 var fragPool = [], FRAG_POOL_SIZE = 200, fragGeo = null;
 function initFragments() {
   fragGeo = new THREE.BoxGeometry(1, 1, 1);
@@ -1840,8 +2017,7 @@ function updateProjectiles(dt) {
       if (pp.y < b.h + 0.5 && Math.abs(pp.x - b.x) < b.hw + 0.5 && Math.abs(pp.z - b.z) < b.hd + 0.5) {
         spawnExplosion(pp.clone(), p.vel.clone().multiplyScalar(0.2), 1.0);
         destroyBuilding(b, pp.clone());
-        awardCoins(5 * DIFFS[selDiff].coinMul);
-        addMasteryXP(6);
+        awardCoins(5 * DIFFS[selDiff].coinMul); addMasteryXP(6);
         markMissionTarget(b);
         mqttPublish({ t: 'destroy', id: myId, idx: j, ix: pp.x, iy: pp.y, iz: pp.z });
         hit = true; break;
@@ -1851,9 +2027,7 @@ function updateProjectiles(dt) {
   }
 }
 
-// ============================================================
 // СПОСОБНОСТИ
-// ============================================================
 function tryUseAbility() {
   if (!playerData.masteryEnabled) { toastMsg('Мастерство отключено', true); return; }
   if (state !== 'playing' || dying) return;
@@ -1980,9 +2154,7 @@ bindButton('fireBtn','fire');
 var abilityBtnEl = document.getElementById('abilityBtn');
 if (abilityBtnEl) abilityBtnEl.addEventListener('pointerdown', function(e) { e.preventDefault(); e.stopPropagation(); tryUseAbility(); });
 
-// ============================================================
-// КОНСОЛЬ / ЧИТЫ
-// ============================================================
+// КОНСОЛЬ
 var consoleEl = document.getElementById('console');
 var consoleLogEl = document.getElementById('consoleLog');
 var consoleInputEl = document.getElementById('consoleInput');
@@ -2011,7 +2183,7 @@ function execCommand(raw) {
   printConsole('> ' + cmd, 'dim');
   var parts = cmd.split(/\s+/); var name = parts[0].toLowerCase(); var args = parts.slice(1);
   switch (name) {
-    case 'help': case '?': printConsole('commands: noclip god moon jupiter slowmo speedrun tiny giant matrix rainbow dance party coins xp mastery maxmastery masteryon masteryoff masterytoggle nuke tp whereami theme seed exit clear', 'info'); break;
+    case 'help': case '?': printConsole('commands: noclip god moon jupiter slowmo speedrun tiny giant matrix rainbow dance party coins xp mastery maxmastery masteryon masteryoff masterytoggle nuke tp whereami theme seed vr exit clear', 'info'); break;
     case 'exit': case 'quit': closeConsole(); break;
     case 'hello': case 'hi': printConsole('hello, pilot.', 'ok'); break;
     case 'whoami': printConsole('pilot#' + myId, 'ok'); break;
@@ -2081,7 +2253,8 @@ function execCommand(raw) {
     case 'vr':
       if (args[0] === 'on') enterVR();
       else if (args[0] === 'off') exitVR();
-      else printConsole('usage: vr on|off', 'err'); break;
+      else if (args[0] === 'axis') cycleVRAxis();
+      else printConsole('usage: vr on|off|axis', 'err'); break;
     default: printConsole('unknown command: ' + name, 'err');
   }
 }
@@ -2099,7 +2272,7 @@ window.addEventListener('keydown', function (e) {
   if ([' ','arrowup','arrowdown','arrowleft','arrowright'].indexOf(k) >= 0) e.preventDefault();
   if (k === 'escape' && state === 'playing' && !vr.active) pauseGame();
   else if (k === 'escape' && state === 'paused') resumeGame();
-  else if (k === 'v') toggleView();
+  else if (k === 'v' && !vr.active) toggleView();
 }, { passive: false });
 window.addEventListener('keyup', function (e) { keys[e.key.toLowerCase()] = false; });
 
@@ -2253,8 +2426,7 @@ function crash(building) {
 function passGate(g) {
   g.passed = true; lastGate = g;
   if (selMission === 'race') {
-    awardCoins(10 * DIFFS[selDiff].coinMul);
-    addMasteryXP(8);
+    awardCoins(10 * DIFFS[selDiff].coinMul); addMasteryXP(8);
     updateGateVisuals(); updateObjectiveUI();
     mqttPublish({ t: 'gate', id: myId, idx: gates.indexOf(g) });
     var all = true;
@@ -2340,7 +2512,6 @@ function updatePhysics(dt) {
   }
   drone.quat.normalize();
   if (d.yawSnap > 0 && Math.abs(input.yaw) > 0.05) drone.vel.applyAxisAngle(_up, yawRate * dt * d.yawSnap);
-
   if (!vr.active) {
     var noThrottle = !(ctrl.thrUp || ctrl.thrDn || keys['shift'] || keys['control'] || keys['controlleft']);
     var noYaw = Math.abs(input.yaw) < 0.05;
@@ -2350,7 +2521,6 @@ function updatePhysics(dt) {
       if (Math.abs(drone.vel.y) < 0.6) drone.vel.y *= Math.exp(-8.0 * dt);
     } else if (noThrottle && drone.pos.y > 2 && !dying) drone.vel.y *= Math.exp(-1.2 * dt);
   }
-
   vUp.set(0, 1, 0).applyQuaternion(drone.quat);
   vAcc.copy(vUp).multiplyScalar(input.throttle * d.maxThrust * aMul);
   vAcc.y -= d.gravity * gMul;
@@ -2456,10 +2626,7 @@ function loop(now) {
   if (cheats.slowmo) rawDt *= 0.4;
   var dt = rawDt;
 
-  updateExplosion(dt);
-  updateFragments(dt);
-  updateProjectiles(dt);
-  updateAbility(dt);
+  updateExplosion(dt); updateFragments(dt); updateProjectiles(dt); updateAbility(dt);
   updateIridescentMaterials();
   if (state === 'playing' && !dying) updateMovingCars(dt);
   pulseT += dt;
@@ -2510,8 +2677,7 @@ function loop(now) {
       elapsed += dt;
       var sec = Math.floor(elapsed);
       if (sec !== lastXpTick && sec > 0 && sec % 3 === 0) { lastXpTick = sec; addMasteryXP(1); }
-      readInput();
-      updatePhysics(dt);
+      readInput(); updatePhysics(dt);
       if (!checkCollisions()) { checkGates(); checkDelivery(); }
       if (droneExhausts && droneExhausts.length > 0) {
         var baseScale = input.throttle > 0.7 ? 1.3 : (input.throttle > 0.4 ? 0.9 : 0.55);
@@ -2555,7 +2721,7 @@ function loop(now) {
   if (state === 'playing' || state === 'paused') {
     updateHUD(spd);
     if (state === 'playing' && !dying && !vr.active) { drawMinimap(); updateGateArrow(); }
-    else { arrowEl.style.opacity = '0'; drawMinimap(); }
+    else if (!vr.active) { arrowEl.style.opacity = '0'; drawMinimap(); }
   } else elThr.style.height = (input.throttle * 100) + '%';
 
   if (vr.active) renderVR();
@@ -2593,21 +2759,17 @@ function resetRun() {
   updateGateVisuals(); updateObjectiveUI(); updateCoinsUI();
 }
 function beginGame() {
-  ensureWorld();
-  resetRun();
+  ensureWorld(); resetRun();
   state = 'playing';
-  menuEl.classList.add('hidden');
-  pauseEl.classList.add('hidden');
-  padsEl.classList.remove('hidden');
-  fireBtnEl.classList.remove('hidden');
+  menuEl.classList.add('hidden'); pauseEl.classList.add('hidden');
+  padsEl.classList.remove('hidden'); fireBtnEl.classList.remove('hidden');
   if (abilityBtnEl) {
     if (playerData.masteryEnabled) abilityBtnEl.classList.remove('hidden');
     else abilityBtnEl.classList.add('hidden');
   }
   arrowEl.style.opacity = '0';
   if (droneMesh) droneMesh.visible = playerData.thirdPerson;
-  updateMasteryUI();
-  updateAbilityUI();
+  updateMasteryUI(); updateAbilityUI();
   lastT = performance.now();
   if (mpActive) { document.getElementById('pMP').classList.remove('hidden'); updateMPCount(); }
   else document.getElementById('pMP').classList.add('hidden');
@@ -2638,6 +2800,7 @@ function toMenu() {
   if (droneMesh) droneMesh.visible = false;
 }
 
+// МАГАЗИН
 function hexCss(h) { return '#' + (h >>> 0).toString(16).padStart(6, '0'); }
 var shopTab = 'regular';
 function renderShop() {
@@ -2651,7 +2814,6 @@ function renderShop() {
       var selected = playerData.selectedDrone === dr.id;
       var canAfford = playerData.coins >= dr.price;
       var m = getMasteryInfo(dr.id);
-      var lvlColor = '#' + m.cur.color.toString(16).padStart(6,'0');
       var card = document.createElement('div');
       card.className = 'skin-card';
       if (selected) card.classList.add('selected');
@@ -2719,9 +2881,7 @@ function renderShop() {
 function openShop() { updateCoinsUI(); renderShop(); shopEl.classList.remove('hidden'); }
 function closeShop() { shopEl.classList.add('hidden'); }
 
-// ============================================================
-// МУЛЬТИПЛЕЕР (полный)
-// ============================================================
+// МУЛЬТИПЛЕЕР
 var BROKERS = ['wss://broker.hivemq.com:8884/mqtt', 'wss://test.mosquitto.org:8081/mqtt'];
 var mqttClient = null;
 var myId = 'P' + Math.random().toString(36).substring(2, 7).toUpperCase();
@@ -2753,7 +2913,7 @@ function mqttConnect(cb) {
     }
   });
 }
-function mqttSubscribe(room, cb) { currentRoom = 'fpvdrone_v19/' + room.toUpperCase(); mqttClient.subscribe(currentRoom, { qos: 0 }, function (err) { if (err) { cb(err); return; } cb(null); }); }
+function mqttSubscribe(room, cb) { currentRoom = 'fpvdrone_v20/' + room.toUpperCase(); mqttClient.subscribe(currentRoom, { qos: 0 }, function (err) { if (err) { cb(err); return; } cb(null); }); }
 function mqttPublish(obj) { if (!mqttClient || !currentRoom) return; try { mqttClient.publish(currentRoom, JSON.stringify(obj), { qos: 0, retain: false }); } catch (e) {} }
 function handleNet(data) {
   switch (data.t) {
@@ -2842,12 +3002,9 @@ function createRemotePlayerMesh(id, colorIdx, skinId, droneId) {
 function removeRemotePlayer(id) { var rp = remotePlayers[id]; if (!rp) return; remoteGroup.remove(rp.mesh); disposeObject3D(rp.mesh); delete remotePlayers[id]; updateMPCount(); }
 function sendState() {
   if (!mpActive) return;
-  mqttPublish({
-    t: 'state', id: myId, cidx: myColorIdx,
-    skin: playerData.selectedSkin, dron: playerData.selectedDrone,
+  mqttPublish({ t: 'state', id: myId, cidx: myColorIdx, skin: playerData.selectedSkin, dron: playerData.selectedDrone,
     x: drone.pos.x, y: drone.pos.y, z: drone.pos.z,
-    qx: drone.quat.x, qy: drone.quat.y, qz: drone.quat.z, qw: drone.quat.w
-  });
+    qx: drone.quat.x, qy: drone.quat.y, qz: drone.quat.z, qw: drone.quat.w });
 }
 function generateRoomCode() { var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = ''; for (var i = 0; i < 4; i++) s += chars[Math.floor(Math.random() * chars.length)]; return s; }
 function leaveMultiplayer() {
@@ -2932,7 +3089,6 @@ if (masteryToggleBtn) {
   });
 }
 refreshMasteryToggleUI();
-
 btnEl.addEventListener('click', function (e) { e.preventDefault(); startGame(); });
 btn2El.addEventListener('click', function (e) { e.preventDefault(); newSeed(); startGame(); });
 document.getElementById('vrBtn').addEventListener('click', function (e) { e.preventDefault(); enterVR(); });
@@ -3002,22 +3158,16 @@ document.addEventListener('visibilitychange', function () {
 // СТАРТ
 try {
   loadPlayerData();
-  initFragments();
-  initExplosion();
-  initProjectiles();
-  ensureWorld();
-  applySkin();
-  updateViewBtn();
-  updateCoinsUI();
-  refreshBest();
-  updateMasteryUI();
-  updateAbilityUI();
-  refreshMasteryToggleUI();
+  initFragments(); initExplosion(); initProjectiles();
+  ensureWorld(); applySkin(); updateViewBtn(); updateCoinsUI();
+  refreshBest(); updateMasteryUI(); updateAbilityUI(); refreshMasteryToggleUI();
   initVRCameras();
-  camera.position.copy(START_POS);
-  camera.quaternion.copy(drone.quat);
+  camera.position.copy(START_POS); camera.quaternion.copy(drone.quat);
   if (droneMesh) droneMesh.visible = false;
   resize();
+  document.addEventListener('touchstart', onVRTouchStart, { passive: true, capture: true });
+  document.addEventListener('touchmove', onVRTouchMove, { passive: true, capture: true });
+  document.addEventListener('touchend', onVRTouchEnd, { passive: true, capture: true });
   document.addEventListener('pointerdown', onVRTap, true);
   window.addEventListener('keydown', onVRKey, true);
   requestAnimationFrame(loop);
