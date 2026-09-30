@@ -2283,8 +2283,9 @@ function createBot(team, skinId, droneId, aiLevel) {
     mode: 'patrol',         // 'patrol' | 'chase' | 'attack' | 'evade'
     target: null,
     waypoint: new THREE.Vector3(bx + (Math.random() - 0.5) * 80, 20, bz + (Math.random() - 0.5) * 80),
-    patrolTimer: 0
+        patrolTimer: 0
   };
+  bot.drone = bot; // алиас — чтобы код мог обращаться к bot.drone.pos / .quat / .vel
   bot.mesh.position.copy(bot.pos);
   bot.mesh.visible = true;
   return bot;
