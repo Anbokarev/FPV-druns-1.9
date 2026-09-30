@@ -1459,12 +1459,23 @@ function buildWorld() {
       }
       var bld = { x: x, z: z, hw: bw / 2, hd: bd / 2, h: bh, meshes: meshes, color: baseCol, alive: true };
       buildings.push(bld);
-      // Декор
-      var dg = new THREE.Group(); dg.position.set(x, 0, z);
+            // Декор крыши
+      var dg = new THREE.Group();
+      dg.position.set(x, 0, z);
       var pT = 0.35, pH = 1.05;
-      dg.add(Object.assign(new THREE.Mesh(propAssets.geo.parapet, roofMat), { position: new THREE.Vector3(0, bh + pH / 2, -bd / 2 + pT / 2) }));
-      var ac = new THREE.Mesh(propAssets.geo.acUnit, propAssets.mat.acBody); ac.position.set(0, bh + 1.1, 0); dg.add(ac);
-      rooftopGroup.add(dg); bld.decoGroup = dg;
+      var pN = new THREE.Mesh(propAssets.geo.parapet, roofMat);
+      pN.scale.set(bw + pT, pH, pT);
+      pN.position.set(0, bh + pH / 2, -bd / 2 + pT / 2);
+      dg.add(pN);
+      var pS = new THREE.Mesh(propAssets.geo.parapet, roofMat);
+      pS.scale.set(bw + pT, pH, pT);
+      pS.position.set(0, bh + pH / 2, bd / 2 - pT / 2);
+      dg.add(pS);
+      var ac = new THREE.Mesh(propAssets.geo.acUnit, propAssets.mat.acBody);
+      ac.position.set(0, bh + 1.1, 0);
+      dg.add(ac);
+      rooftopGroup.add(dg);
+      bld.decoGroup = dg;
     }
   }
   buildMovingCars(th, rnd);
