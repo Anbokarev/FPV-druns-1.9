@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#05080f">
-<title>FPV DRONE v2.1</title>
+<title>FPV DRONE v2.2</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;background:#05080f;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;-webkit-user-select:none;user-select:none;touch-action:none;overscroll-behavior:none;position:fixed;inset:0}
@@ -20,6 +20,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05080f;font-family:
 #pCrash{top:calc(66px + env(safe-area-inset-top));left:calc(8px + env(safe-area-inset-left))}
 #pCoins{top:calc(124px + env(safe-area-inset-top));left:calc(8px + env(safe-area-inset-left))}
 #pCoins .val{color:#ffd040}
+#pWeather{top:calc(182px + env(safe-area-inset-top));left:calc(8px + env(safe-area-inset-left));font-size:11px}
+#pWeather .val{font-size:11px;color:#a0d0ff;letter-spacing:2px}
 #pGates{top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);text-align:center;min-width:110px}
 #pSpeed{top:calc(8px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));text-align:right}
 #pAlt{top:calc(66px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));text-align:right}
@@ -59,6 +61,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05080f;font-family:
 #abilityBtn.active{background:radial-gradient(circle at 50% 38%,rgba(255,240,120,.75),rgba(255,180,20,.5));box-shadow:0 0 30px rgba(255,220,60,.7);border-color:rgba(255,220,60,.9)}
 #flash{position:fixed;inset:0;pointer-events:none;z-index:25;background:radial-gradient(circle at 50% 55%,#ffd070 0%,#ff6a20 30%,#c01000 60%,#300000 100%);opacity:0}
 #hitFlash{position:fixed;inset:0;pointer-events:none;z-index:24;background:radial-gradient(circle at 50% 50%,rgba(255,40,40,0),rgba(255,40,40,.6));opacity:0;transition:opacity .3s}
+#lightningFlash{position:fixed;inset:0;pointer-events:none;z-index:23;background:#eaf6ff;opacity:0;transition:opacity .08s}
 #menu{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,#0e1e33 0%,#05080f 75%);color:#d8f0ff;text-align:center;padding:22px;overflow-y:auto}
 #menu.hidden{display:none}
 #menu h1{font-size:clamp(22px,7vw,40px);letter-spacing:5px;font-weight:800;background:linear-gradient(90deg,#00e5ff,#7cf7c0,#00e5ff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:2px}
@@ -70,6 +73,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05080f;font-family:
 .opt:disabled{opacity:.4;cursor:not-allowed}
 .opt.mission[data-mission="destroy"].active{border-color:rgba(255,80,60,.9);color:#fff;background:linear-gradient(180deg,rgba(255,90,60,.4),rgba(180,30,20,.18))}
 .opt.mission[data-mission="deliver"].active{border-color:rgba(255,220,80,.9);color:#fff;background:linear-gradient(180deg,rgba(255,200,60,.35),rgba(180,140,20,.15))}
+.opt.weather{padding:7px 9px;font-size:9.5px;letter-spacing:1.5px}
+.opt.weather.active{border-color:rgba(140,220,255,.95);color:#eafcff;background:linear-gradient(180deg,rgba(60,140,220,.4),rgba(30,80,160,.15))}
+.opt.weather[data-weather="2"].active,.opt.weather[data-weather="5"].active{border-color:rgba(120,180,255,.9);background:linear-gradient(180deg,rgba(30,60,140,.5),rgba(10,30,80,.2))}
+.opt.weather[data-weather="3"].active{border-color:rgba(220,240,255,.9);background:linear-gradient(180deg,rgba(180,200,220,.35),rgba(90,120,160,.15));color:#fff}
+.opt.weather[data-weather="4"].active{border-color:rgba(180,200,220,.8);background:linear-gradient(180deg,rgba(120,140,160,.4),rgba(60,80,100,.15));color:#fff}
 .seedline{font-size:10px;letter-spacing:2px;opacity:.55;margin:4px 0 12px;display:flex;align-items:center;justify-content:center;gap:8px}
 .seedline b{color:#5fe0ff}
 .dice{pointer-events:auto;cursor:pointer;width:24px;height:24px;border-radius:7px;border:1px solid rgba(90,180,255,.35);background:rgba(12,28,48,.7);color:#8fd4ff;font-size:13px;font-family:inherit;display:flex;align-items:center;justify-content:center}
@@ -131,9 +139,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05080f;font-family:
 .drone-badge.glider{color:#a0e0ff;border-color:rgba(90,200,255,.6)}
 .drone-badge.jet{color:#ff8060;border-color:rgba(255,120,60,.6)}
 .drone-badge.heavy{color:#ffd040;border-color:rgba(255,200,80,.7)}
-.drone-stats{display:flex;flex-wrap:wrap;gap:3px;width:100%;justify-content:center;margin-top:2px}
-.drone-stat{font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(90,180,255,.1);border:1px solid rgba(90,180,255,.2);color:#8fd4ff}
-.drone-stat b{color:#eafcff}
 #mpPanel{position:fixed;inset:0;z-index:48;display:flex;align-items:center;justify-content:center;background:rgba(3,8,16,.85);backdrop-filter:blur(12px);padding:16px}
 #mpPanel.hidden{display:none}
 .mp-box{width:min(420px,100%);background:linear-gradient(180deg,rgba(15,30,50,.96),rgba(8,18,32,.96));border:1.5px solid rgba(60,255,140,.4);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px}
@@ -215,7 +220,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05080f;font-family:
 #vrCalibrating{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;letter-spacing:4px;color:#ffd040;background:rgba(8,18,32,.85);padding:14px 26px;border-radius:12px;border:2px solid rgba(255,200,80,.7);text-align:center;line-height:1.6}
 body.vr-mode .pad.right,body.vr-mode #fireBtn,body.vr-mode #abilityBtn,body.vr-mode #thrWrap,body.vr-mode #thrMark{display:none!important}
 body.vr-mode .pad.left{opacity:.25}
-body.pvp-mode #pTime,body.pvp-mode #pCrash,body.pvp-mode #pCoins,body.pvp-mode #pGates,body.pvp-mode #pAlt,body.pvp-mode #minimap,body.pvp-mode #gateArrow{display:none!important}
+body.pvp-mode #pTime,body.pvp-mode #pCrash,body.pvp-mode #pCoins,body.pvp-mode #pGates,body.pvp-mode #pAlt,body.pvp-mode #minimap,body.pvp-mode #gateArrow,body.pvp-mode #pWeather{display:none!important}
 </style>
 </head>
 <body>
@@ -229,6 +234,7 @@ body.pvp-mode #pTime,body.pvp-mode #pCrash,body.pvp-mode #pCoins,body.pvp-mode #
   <div class="panel" id="pTime"><div class="lbl">ВРЕМЯ</div><div class="val" id="vTime">0.0</div></div>
   <div class="panel" id="pCrash"><div class="lbl">КРАШИ</div><div class="val" id="vCrash">0</div></div>
   <div class="panel" id="pCoins"><div class="lbl">МОНЕТЫ</div><div class="val" id="vCoins">0</div></div>
+  <div class="panel" id="pWeather"><div class="lbl">ПОГОДА</div><div class="val" id="vWeather">☀ ЯСНО</div></div>
   <div class="panel" id="pGates"><div class="lbl" id="objLabel">ВОРОТА</div><div class="val" id="vGates">0/9</div><div id="progWrap"><div id="progFill"></div></div></div>
   <div class="panel" id="pSpeed"><div class="lbl">КМ/Ч</div><div class="val" id="vSpeed">0</div></div>
   <div class="panel" id="pAlt"><div class="lbl">ВЫСОТА М</div><div class="val" id="vAlt">0</div></div>
@@ -276,6 +282,7 @@ body.pvp-mode #pTime,body.pvp-mode #pCrash,body.pvp-mode #pCoins,body.pvp-mode #
 <button id="abilityBtn" class="hidden">⚡</button>
 <div id="flash"></div>
 <div id="hitFlash"></div>
+<div id="lightningFlash"></div>
 <div id="pvpMsg"></div>
 
 <div id="vrOverlay" class="hidden">
@@ -288,7 +295,7 @@ body.pvp-mode #pTime,body.pvp-mode #pCrash,body.pvp-mode #pCoins,body.pvp-mode #
 
 <div id="menu">
   <h1 id="menuTitle">FPV DRONE</h1>
-  <div class="version" id="menuVersion">РЕЛИЗ v2.1</div>
+  <div class="version" id="menuVersion">РЕЛИЗ v2.2</div>
   <div class="sub" id="menuSub">ГОРОДСКАЯ ГОНКА</div>
 
   <div id="menuOpts">
@@ -309,8 +316,17 @@ body.pvp-mode #pTime,body.pvp-mode #pCrash,body.pvp-mode #pCoins,body.pvp-mode #
       <button class="opt" data-theme="3">НОЧЬ</button>
       <button class="opt" data-theme="4">ПЕСОК</button>
     </div>
+    <div class="opt-row" id="weatherRow">
+      <button class="opt weather active" data-weather="0">☀ ЯСНО</button>
+      <button class="opt weather" data-weather="1">☁ ОБЛАЧНО</button>
+      <button class="opt weather" data-weather="2">🌧 ДОЖДЬ</button>
+      <button class="opt weather" data-weather="3">❄ СНЕГ</button>
+      <button class="opt weather" data-weather="4">🌫 ТУМАН</button>
+      <button class="opt weather" data-weather="5">⛈ ГРОЗА</button>
+    </div>
     <div class="opt-row" id="masteryToggleRow" style="margin-top:4px">
       <button class="opt" id="masteryToggle">⭐ МАСТЕРСТВО: ВКЛ</button>
+      <button class="opt" id="soundToggle">🔊 ЗВУК: ВКЛ</button>
     </div>
     <div class="seedline">СИД <b id="seedVal">—</b><button class="dice" id="seedBtn">⟳</button></div>
   </div>
@@ -414,6 +430,10 @@ body.pvp-mode #pTime,body.pvp-mode #pCrash,body.pvp-mode #pCoins,body.pvp-mode #
       <h3>🎮 Управление</h3>
       <p><b>Левый блок</b> — газ и рыскание. <b>Правый блок</b> — тангаж и крен.</p>
       <p><b>Клавиатура:</b> WASD · QE · Shift/Ctrl · ПРОБЕЛ — огонь · F — способность · V — вид · Esc — пауза</p>
+      <h3>🌦 Погода</h3>
+      <p>6 типов: ясно, облачно, дождь, снег, туман, гроза (с молниями). Влияет на видимость и полёт (ветер).</p>
+      <h3>🔊 Звук</h3>
+      <p>Синтезируется в реальном времени: гул моторов, ветер, выстрелы, взрывы, попадания, ворота. Отключается кнопкой в меню.</p>
       <h3>⚔ PVP</h3>
       <ul>
         <li><b>1 vs 1 БОТ</b> — дуэль с одним ботом</li>
@@ -481,7 +501,6 @@ var cylGeo8 = new THREE.CylinderGeometry(1, 1, 1, 8);
 var sphGeo12 = new THREE.SphereGeometry(1, 12, 8);
 var coneGeo8 = new THREE.ConeGeometry(1, 1, 8);
 
-// PVP константы
 var PVP_HP_MAX = 100;
 var PVP_HIT_DAMAGE = 25;
 var PVP_CRASH_DAMAGE = 50;
@@ -659,11 +678,12 @@ var SKINS = [
 ];
 function getSkinById(id) { for (var i = 0; i < SKINS.length; i++) if (SKINS[i].id === id) return SKINS[i]; return SKINS[0]; }
 
-var playerData = { coins:0, unlockedSkins:['default'], selectedSkin:'default', thirdPerson:false, unlockedDrones:['standard'], selectedDrone:'standard', mastery:{}, masteryEnabled:true };
+var playerData = { coins:0, unlockedSkins:['default'], selectedSkin:'default', thirdPerson:false, unlockedDrones:['standard'], selectedDrone:'standard', mastery:{}, masteryEnabled:true, soundEnabled:true };
 
 function loadPlayerData() {
   try {
-    var raw = localStorage.getItem('fpv_player_v21');
+    var raw = localStorage.getItem('fpv_player_v22');
+    if (!raw) raw = localStorage.getItem('fpv_player_v21');
     if (!raw) raw = localStorage.getItem('fpv_player_v110');
     if (!raw) raw = localStorage.getItem('fpv_player');
     if (raw) {
@@ -676,12 +696,13 @@ function loadPlayerData() {
       if (typeof d.selectedDrone === 'string') playerData.selectedDrone = d.selectedDrone;
       if (d.mastery && typeof d.mastery === 'object') playerData.mastery = d.mastery;
       if (typeof d.masteryEnabled === 'boolean') playerData.masteryEnabled = d.masteryEnabled;
+      if (typeof d.soundEnabled === 'boolean') playerData.soundEnabled = d.soundEnabled;
       if (playerData.unlockedSkins.indexOf('default') < 0) playerData.unlockedSkins.push('default');
       if (playerData.unlockedDrones.indexOf('standard') < 0) playerData.unlockedDrones.push('standard');
     }
   } catch (e) {}
 }
-function savePlayerData() { try { localStorage.setItem('fpv_player_v21', JSON.stringify(playerData)); } catch (e) {} }
+function savePlayerData() { try { localStorage.setItem('fpv_player_v22', JSON.stringify(playerData)); } catch (e) {} }
 function awardCoins(n) { if (n <= 0) return; playerData.coins += n; savePlayerData(); updateCoinsUI(); }
 function updateCoinsUI() {
   var c = document.getElementById('vCoins'); if (c) c.textContent = String(playerData.coins);
@@ -701,6 +722,349 @@ var DIFFS = [
   { id:'hard', name:'СЛОЖНО', gates:16, minDist:50, maxDist:80, maxTurn:1.15, minAlt:14, maxAlt:75, altStep:14, radius:4.6, density:1.0,  clear:32, coinMul:3 }
 ];
 
+// ════════════════════════════════════════════════════════════
+//  ПОГОДА
+// ════════════════════════════════════════════════════════════
+var WEATHERS = [
+  { id:'clear',  name:'☀ ЯСНО',    fogMul:1.00, dark:1.00, wind:0.0, rain:0,   snow:0, lightning:0 },
+  { id:'cloudy', name:'☁ ОБЛАЧНО', fogMul:1.45, dark:0.82, wind:0.6, rain:0,   snow:0, lightning:0 },
+  { id:'rain',   name:'🌧 ДОЖДЬ',  fogMul:1.80, dark:0.68, wind:1.4, rain:1,   snow:0, lightning:0 },
+  { id:'snow',   name:'❄ СНЕГ',    fogMul:2.20, dark:0.90, wind:0.9, rain:0,   snow:1, lightning:0 },
+  { id:'fog',    name:'🌫 ТУМАН',  fogMul:3.40, dark:0.90, wind:0.2, rain:0,   snow:0, lightning:0 },
+  { id:'storm',  name:'⛈ ГРОЗА',   fogMul:2.10, dark:0.50, wind:3.0, rain:1.3, snow:0, lightning:1 }
+];
+var selWeather = 0;
+var weatherGroup = new THREE.Group();
+var weatherState = {
+  rain: null, snow: null,
+  wind: new THREE.Vector2(0, 0),
+  nextLightning: 0, flashT: 0, flashCount: 0, flashOn: false
+};
+var lightningFlashEl = null;
+function getWeather() { return WEATHERS[selWeather]; }
+
+function buildRain(count) {
+  var geo = new THREE.BufferGeometry();
+  var pos = new Float32Array(count * 6);
+  var vel = new Float32Array(count);
+  for (var i = 0; i < count; i++) {
+    var x = (Math.random() - 0.5) * 220;
+    var y = Math.random() * 140;
+    var z = (Math.random() - 0.5) * 220;
+    pos[i*6+0] = x; pos[i*6+1] = y; pos[i*6+2] = z;
+    pos[i*6+3] = x + 0.15; pos[i*6+4] = y + 1.8; pos[i*6+5] = z;
+    vel[i] = 50 + Math.random() * 30;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  var mat = new THREE.LineBasicMaterial({ color: 0xa8d4ff, transparent: true, opacity: 0.55, depthWrite: false });
+  var mesh = new THREE.LineSegments(geo, mat);
+  mesh.frustumCulled = false;
+  mesh.userData.vel = vel;
+  return mesh;
+}
+function updateRainMesh(mesh, dt, windX, windZ) {
+  var pos = mesh.geometry.attributes.position;
+  var arr = pos.array;
+  var vel = mesh.userData.vel;
+  var n = vel.length;
+  var px = drone.pos.x, py = drone.pos.y, pz = drone.pos.z;
+  for (var i = 0; i < n; i++) {
+    var i6 = i * 6;
+    var dy = vel[i] * dt;
+    arr[i6+1] -= dy; arr[i6+4] -= dy;
+    arr[i6+0] += windX * 15 * dt; arr[i6+3] += windX * 15 * dt;
+    arr[i6+2] += windZ * 15 * dt; arr[i6+5] += windZ * 15 * dt;
+    if (arr[i6+1] < py - 40 || Math.abs(arr[i6+0]-px) > 110 || Math.abs(arr[i6+2]-pz) > 110) {
+      var x = px + (Math.random() - 0.5) * 220;
+      var y = py + 55 + Math.random() * 65;
+      var z = pz + (Math.random() - 0.5) * 220;
+      arr[i6+0] = x; arr[i6+1] = y; arr[i6+2] = z;
+      arr[i6+3] = x + 0.15; arr[i6+4] = y + 1.8; arr[i6+5] = z;
+    }
+  }
+  pos.needsUpdate = true;
+}
+function buildSnow(count) {
+  var geo = new THREE.BufferGeometry();
+  var pos = new Float32Array(count * 3);
+  var vel = new Float32Array(count);
+  var phase = new Float32Array(count);
+  for (var i = 0; i < count; i++) {
+    pos[i*3+0] = (Math.random() - 0.5) * 220;
+    pos[i*3+1] = Math.random() * 120;
+    pos[i*3+2] = (Math.random() - 0.5) * 220;
+    vel[i] = 2.2 + Math.random() * 3.2;
+    phase[i] = Math.random() * 6.28;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  var S = 32; var cv = document.createElement('canvas'); cv.width = S; cv.height = S;
+  var g = cv.getContext('2d');
+  var grd = g.createRadialGradient(S/2, S/2, 0, S/2, S/2, S/2);
+  grd.addColorStop(0, 'rgba(255,255,255,1)');
+  grd.addColorStop(0.45, 'rgba(255,255,255,0.75)');
+  grd.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = grd; g.fillRect(0, 0, S, S);
+  var tex = new THREE.CanvasTexture(cv);
+  var mat = new THREE.PointsMaterial({ size: 0.7, map: tex, transparent: true, depthWrite: false, opacity: 0.92, sizeAttenuation: true, blending: THREE.NormalBlending });
+  var mesh = new THREE.Points(geo, mat);
+  mesh.frustumCulled = false;
+  mesh.userData.vel = vel;
+  mesh.userData.phase = phase;
+  return mesh;
+}
+function updateSnowMesh(mesh, dt, windX, windZ, time) {
+  var pos = mesh.geometry.attributes.position;
+  var arr = pos.array;
+  var vel = mesh.userData.vel;
+  var ph = mesh.userData.phase;
+  var n = vel.length;
+  var px = drone.pos.x, py = drone.pos.y, pz = drone.pos.z;
+  for (var i = 0; i < n; i++) {
+    var i3 = i * 3;
+    arr[i3+1] -= vel[i] * dt;
+    arr[i3+0] += (Math.sin(time * 1.7 + ph[i]) * 0.6 + windX * 4) * dt;
+    arr[i3+2] += (Math.cos(time * 1.3 + ph[i]) * 0.6 + windZ * 4) * dt;
+    if (arr[i3+1] < py - 40 || Math.abs(arr[i3+0]-px) > 110 || Math.abs(arr[i3+2]-pz) > 110) {
+      arr[i3+0] = px + (Math.random() - 0.5) * 220;
+      arr[i3+1] = py + 55 + Math.random() * 60;
+      arr[i3+2] = pz + (Math.random() - 0.5) * 220;
+    }
+  }
+  pos.needsUpdate = true;
+}
+function applyWeather() {
+  var w = getWeather();
+  var th = THEMES[selTheme];
+  scene.fog.near = th.fogNear / w.fogMul;
+  scene.fog.far = th.fogFar / w.fogMul;
+  var sky = new THREE.Color(th.sky);
+  sky.multiplyScalar(w.dark);
+  if (cheats && cheats.rainbow) { }
+  else if (cheats && cheats.matrix) { sky.setHex(0x001a00); }
+  else { scene.background = sky; scene.fog.color.copy(sky); }
+  if (w.wind > 0) {
+    if (weatherState.wind.lengthSq() < 0.01) {
+      var a = Math.random() * Math.PI * 2;
+      weatherState.wind.set(Math.cos(a), Math.sin(a));
+    }
+  } else weatherState.wind.set(0, 0);
+  if (weatherState.rain) { weatherGroup.remove(weatherState.rain); weatherState.rain.geometry.dispose(); weatherState.rain.material.dispose(); weatherState.rain = null; }
+  if (w.rain > 0) { weatherState.rain = buildRain(Math.round(1200 * w.rain)); weatherGroup.add(weatherState.rain); }
+  if (weatherState.snow) { weatherGroup.remove(weatherState.snow); weatherState.snow.geometry.dispose(); weatherState.snow.material.dispose(); weatherState.snow = null; }
+  if (w.snow > 0) { weatherState.snow = buildSnow(Math.round(900 * w.snow)); weatherGroup.add(weatherState.snow); }
+  weatherState.nextLightning = w.lightning > 0 ? (2 + Math.random() * 4) : 0;
+  var vw = document.getElementById('vWeather'); if (vw) vw.textContent = w.name;
+}
+function updateWeather(dt) {
+  var w = getWeather();
+  if (w.wind > 0) {
+    var target = weatherState.wind.clone().normalize().multiplyScalar(w.wind);
+    weatherState.wind.lerp(target, Math.min(1, dt * 0.4));
+  }
+  if (weatherState.rain) updateRainMesh(weatherState.rain, dt, weatherState.wind.x, weatherState.wind.y);
+  if (weatherState.snow) updateSnowMesh(weatherState.snow, dt, weatherState.wind.x, weatherState.wind.y, pulseT);
+  if (w.lightning > 0 && state === 'playing') {
+    weatherState.nextLightning -= dt;
+    if (weatherState.nextLightning <= 0) { weatherState.nextLightning = 3 + Math.random() * 6; triggerLightning(); }
+  }
+  if (weatherState.flashT > 0) {
+    weatherState.flashT -= dt;
+    if (lightningFlashEl) {
+      var a = Math.max(0, weatherState.flashT / 0.25);
+      if (weatherState.flashCount > 0 && weatherState.flashT < 0.15 && !weatherState.flashOn) {
+        weatherState.flashOn = true; weatherState.flashCount--;
+        weatherState.flashT = Math.max(weatherState.flashT, 0.12);
+        a = 1;
+      }
+      lightningFlashEl.style.opacity = String(Math.min(1, a * 0.85));
+    }
+    hemi.intensity = THEMES[selTheme].hemiInt * (1 + weatherState.flashT * 8);
+    if (weatherState.flashT <= 0) {
+      weatherState.flashOn = false;
+      hemi.intensity = THEMES[selTheme].hemiInt;
+      if (lightningFlashEl) lightningFlashEl.style.opacity = '0';
+    }
+  }
+}
+function triggerLightning() {
+  weatherState.flashT = 0.25;
+  weatherState.flashCount = (Math.random() < 0.6) ? 1 : 0;
+  weatherState.flashOn = false;
+  playThunder(0.6 + Math.random() * 0.4);
+}
+function getWindForce() { return getWeather().wind; }
+
+// ════════════════════════════════════════════════════════════
+//  ЗВУК
+// ════════════════════════════════════════════════════════════
+var audioCtx = null;
+var audioMaster = null;
+var audioReady = false;
+var soundEnabled = true;
+var SND = { motorGain:null, motorOsc1:null, motorOsc2:null, motorFilter:null,
+            windGain:null, windSrc:null, windFilter:null };
+
+function initAudio() {
+  if (audioCtx) { if (audioCtx.state === 'suspended') try { audioCtx.resume(); } catch(e){} return; }
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    audioCtx = new AC();
+    audioMaster = audioCtx.createGain();
+    audioMaster.gain.value = soundEnabled ? 0.55 : 0;
+    audioMaster.connect(audioCtx.destination);
+    audioReady = true;
+    startAmbientLoop();
+  } catch(e) {}
+}
+function startAmbientLoop() {
+  if (!audioCtx) return;
+  var mg = audioCtx.createGain(); mg.gain.value = 0;
+  var mf = audioCtx.createBiquadFilter(); mf.type = 'lowpass'; mf.frequency.value = 800; mf.Q.value = 4;
+  var mo1 = audioCtx.createOscillator(); mo1.type = 'sawtooth'; mo1.frequency.value = 110;
+  var mo2 = audioCtx.createOscillator(); mo2.type = 'sawtooth'; mo2.frequency.value = 165;
+  var mo1g = audioCtx.createGain(); mo1g.gain.value = 0.6;
+  var mo2g = audioCtx.createGain(); mo2g.gain.value = 0.4;
+  mo1.connect(mo1g); mo2.connect(mo2g);
+  mo1g.connect(mf); mo2g.connect(mf);
+  mf.connect(mg); mg.connect(audioMaster);
+  mo1.start(); mo2.start();
+  SND.motorGain = mg; SND.motorOsc1 = mo1; SND.motorOsc2 = mo2; SND.motorFilter = mf;
+
+  var buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+  var d = buf.getChannelData(0);
+  var last = 0;
+  for (var i = 0; i < d.length; i++) { var wn = Math.random() * 2 - 1; last = (last + 0.02 * wn) / 1.02; d[i] = last * 3.5; }
+  var ws = audioCtx.createBufferSource(); ws.buffer = buf; ws.loop = true;
+  var wf = audioCtx.createBiquadFilter(); wf.type = 'bandpass'; wf.frequency.value = 700; wf.Q.value = 0.8;
+  var wg = audioCtx.createGain(); wg.gain.value = 0;
+  ws.connect(wf); wf.connect(wg); wg.connect(audioMaster);
+  ws.start();
+  SND.windGain = wg; SND.windSrc = ws; SND.windFilter = wf;
+}
+function updateAudioContinuous(throttle, speed, isPlaying) {
+  if (!audioReady) return;
+  var t = audioCtx.currentTime;
+  var mGain = isPlaying ? (throttle * 0.13 + Math.min(speed/60,1) * 0.05) : 0;
+  var wGain = isPlaying ? (Math.min(speed/70,1) * 0.14 + getWeather().wind * 0.03) : 0;
+  if (SND.motorGain) {
+    SND.motorGain.gain.setTargetAtTime(mGain, t, 0.08);
+    var f = 95 + throttle * 55 + speed * 0.4;
+    SND.motorOsc1.frequency.setTargetAtTime(f, t, 0.1);
+    SND.motorOsc2.frequency.setTargetAtTime(f * 1.51, t, 0.1);
+    SND.motorFilter.frequency.setTargetAtTime(500 + throttle * 1100 + speed * 5, t, 0.1);
+  }
+  if (SND.windGain) {
+    SND.windGain.gain.setTargetAtTime(wGain, t, 0.12);
+    SND.windFilter.frequency.setTargetAtTime(500 + speed * 12 + getWeather().wind * 200, t, 0.15);
+  }
+}
+function playFire() {
+  if (!audioReady || !soundEnabled) return;
+  var t = audioCtx.currentTime;
+  var o = audioCtx.createOscillator(); o.type = 'square';
+  o.frequency.setValueAtTime(950, t);
+  o.frequency.exponentialRampToValueAtTime(280, t + 0.08);
+  var g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.09, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+  o.connect(g); g.connect(audioMaster);
+  o.start(t); o.stop(t + 0.12);
+}
+function playExplosion(scale) {
+  if (!audioReady || !soundEnabled) return;
+  scale = scale || 1;
+  var t = audioCtx.currentTime;
+  var dur = 0.5 + 0.5 * scale;
+  var buf = audioCtx.createBuffer(1, Math.floor(audioCtx.sampleRate * dur), audioCtx.sampleRate);
+  var d = buf.getChannelData(0);
+  for (var i = 0; i < d.length; i++) { var k = 1 - i / d.length; d[i] = (Math.random() * 2 - 1) * k * k; }
+  var s = audioCtx.createBufferSource(); s.buffer = buf;
+  var f = audioCtx.createBiquadFilter(); f.type = 'lowpass';
+  f.frequency.setValueAtTime(2000, t);
+  f.frequency.exponentialRampToValueAtTime(180, t + dur);
+  f.Q.value = 1;
+  var g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.4 * Math.min(scale, 2), t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  s.connect(f); f.connect(g); g.connect(audioMaster);
+  s.start(t);
+}
+function playChime(freq, dur) {
+  if (!audioReady || !soundEnabled) return;
+  var t = audioCtx.currentTime;
+  var o = audioCtx.createOscillator(); o.type = 'sine';
+  o.frequency.setValueAtTime(freq, t);
+  o.frequency.exponentialRampToValueAtTime(freq * 1.5, t + dur);
+  var g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.18, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.connect(g); g.connect(audioMaster);
+  o.start(t); o.stop(t + dur + 0.05);
+}
+function playHit() {
+  if (!audioReady || !soundEnabled) return;
+  var t = audioCtx.currentTime;
+  var o = audioCtx.createOscillator(); o.type = 'square';
+  o.frequency.setValueAtTime(260, t);
+  o.frequency.exponentialRampToValueAtTime(70, t + 0.16);
+  var g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.22, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+  o.connect(g); g.connect(audioMaster);
+  o.start(t); o.stop(t + 0.2);
+}
+function playAbility() {
+  if (!audioReady || !soundEnabled) return;
+  var t = audioCtx.currentTime;
+  var o = audioCtx.createOscillator(); o.type = 'sawtooth';
+  o.frequency.setValueAtTime(180, t);
+  o.frequency.exponentialRampToValueAtTime(1400, t + 0.28);
+  var o2 = audioCtx.createOscillator(); o2.type = 'triangle';
+  o2.frequency.setValueAtTime(400, t);
+  o2.frequency.exponentialRampToValueAtTime(2400, t + 0.32);
+  var g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.16, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.36);
+  o.connect(g); o2.connect(g); g.connect(audioMaster);
+  o.start(t); o.stop(t + 0.38); o2.start(t); o2.stop(t + 0.38);
+}
+function playThunder(intensity) {
+  if (!audioReady || !soundEnabled) return;
+  intensity = intensity || 1;
+  var t = audioCtx.currentTime + 0.1 + Math.random() * 0.2;
+  var dur = 1.4 + Math.random() * 1.2;
+  var buf = audioCtx.createBuffer(1, Math.floor(audioCtx.sampleRate * dur), audioCtx.sampleRate);
+  var d = buf.getChannelData(0);
+  for (var i = 0; i < d.length; i++) { var k = 1 - i / d.length; d[i] = (Math.random() * 2 - 1) * k * 0.6 * intensity; }
+  var s = audioCtx.createBufferSource(); s.buffer = buf;
+  var f = audioCtx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 220; f.Q.value = 0.7;
+  var g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.001, t);
+  g.gain.linearRampToValueAtTime(0.4 * intensity, t + 0.05);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  s.connect(f); f.connect(g); g.connect(audioMaster);
+  s.start(t);
+}
+function setSoundEnabled(v) {
+  soundEnabled = v;
+  playerData.soundEnabled = v;
+  savePlayerData();
+  if (audioMaster && audioCtx) audioMaster.gain.setTargetAtTime(v ? 0.55 : 0, audioCtx.currentTime, 0.05);
+}
+function firstGesture() {
+  initAudio();
+  window.removeEventListener('pointerdown', firstGesture);
+  window.removeEventListener('keydown', firstGesture);
+  window.removeEventListener('touchstart', firstGesture);
+}
+window.addEventListener('pointerdown', firstGesture);
+window.addEventListener('keydown', firstGesture);
+window.addEventListener('touchstart', firstGesture);
+
+// ════════════════════════════════════════════════════════════
+//  SETUP + GLOBALS + VR    (тот самый блок, что был пропущен)
+// ════════════════════════════════════════════════════════════
 var canvas = document.getElementById('c');
 var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
@@ -711,6 +1075,9 @@ var hemi = new THREE.HemisphereLight(0xbce4ff, 0x4a5a3a, 1.25); scene.add(hemi);
 var dirLight = new THREE.DirectionalLight(0xfff6e0, 1.5); dirLight.position.set(120, 240, 80); scene.add(dirLight);
 var explLight = new THREE.PointLight(0xffa040, 0, 70, 2); scene.add(explLight);
 var explLightTimer = 0;
+
+// weatherGroup цепляем к сцене (после создания scene)
+scene.add(weatherGroup);
 
 function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
 function mulberry32(a) {
@@ -764,27 +1131,13 @@ var currentSeed = (Math.random() * 1e9) | 0;
 var builtKey = '';
 var droneMesh = null, droneProps = [], droneIridMats = [], droneExhausts = [];
 
-// PVP глобальные
 var pvp = {
-  active: false,
-  mode: null,          // '1v1bot' | '1v2bot' | '2v2bot' | '1v1online' | '2v2online'
-  myTeam: 'red',
-  myHp: PVP_HP_MAX,
-  myKills: 0,
-  myDeaths: 0,
-  redScore: 0,
-  blueScore: 0,
-  redDeaths: 0,
-  blueDeaths: 0,
-  matchTimer: 0,
-  respawnTimer: 0,
-  enemies: [],         // боты-противники
-  allies: [],          // союзные боты
-  projectiles: [],     // снаряды ИИ
-  onlineRivals: {}     // для онлайн PvP
+  active: false, mode: null, myTeam: 'red', myHp: PVP_HP_MAX,
+  myKills: 0, myDeaths: 0, redScore: 0, blueScore: 0,
+  redDeaths: 0, blueDeaths: 0, matchTimer: 0, respawnTimer: 0,
+  enemies: [], allies: [], projectiles: [], onlineRivals: {}
 };
 
-// VR (полный, с fallback)
 var vr = {
   active: false, calibrated: false, mode: 'none',
   baseline: { pitch: 0, roll: 0, yaw: 0 },
@@ -801,9 +1154,7 @@ function getScreenAngle() {
   if (typeof window.orientation === 'number') return window.orientation;
   return 0;
 }
-function isSecure() {
-  return location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
-}
+function isSecure() { return location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:'; }
 function screenToUserAngles(alpha, beta, gamma) {
   var ang = getScreenAngle(); ang = ((ang % 360) + 360) % 360;
   if (ang === 90) return { pitch: gamma, roll: -beta, yaw: alpha };
@@ -1023,7 +1374,6 @@ function renderVR() {
   renderer.render(scene, vr.cameraR);
   renderer.setScissorTest(false);
 }
-
 // ════════════════════════════════════════════════════════════
 //  ДЕТАЛИ ДРОНОВ
 // ════════════════════════════════════════════════════════════
@@ -1067,7 +1417,6 @@ function makeGimbal(s, camMat, lensMat, glowMat) {
   var l = new THREE.Mesh(cylGeo12, lensMat); l.scale.set(0.09 * s, 0.10 * s, 0.09 * s); l.rotation.x = Math.PI / 2; l.position.set(0, -0.22 * s, -0.20 * s); g.add(l);
   return g;
 }
-
 function buildDroneMesh(skin, parentGroup, droneType, teamColor) {
   parentGroup = parentGroup || scene;
   droneType = droneType || DRONES[0];
@@ -1086,7 +1435,6 @@ function buildDroneMesh(skin, parentGroup, droneType, teamColor) {
   var lensMat = new THREE.MeshStandardMaterial({ color: 0x050508, roughness: 0.15, metalness: 0.8 });
   var wingMat = new THREE.MeshStandardMaterial({ color: bodyHex, roughness: 0.35, metalness: 0.4, side: THREE.DoubleSide });
   var darkMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1e, roughness: 0.5, metalness: 0.5 });
-  var screwMat = new THREE.MeshStandardMaterial({ color: 0xb0b0b8, roughness: 0.4, metalness: 0.9 });
 
   var props = [], exhausts = [];
   function addCopterNode(cx, cz, armLen, s, armIdx, opts) {
@@ -1099,7 +1447,6 @@ function buildDroneMesh(skin, parentGroup, droneType, teamColor) {
     props.push({ mesh: prop, axis: 'y', dir: ccw ? 1 : -1 });
     var led = new THREE.Mesh(sphGeo12, glowMat); led.scale.setScalar(0.08 * s); led.position.set(cx, -0.13 * s, cz); g.add(led);
   }
-
   if (shape === 'copter-standard') {
     var l = new THREE.Mesh(boxGeo, bodyMat); l.scale.set(1.0, 0.20, 1.4); g.add(l);
     var u = new THREE.Mesh(boxGeo, bodyMat); u.scale.set(0.85, 0.14, 1.15); u.position.y = 0.17; g.add(u);
@@ -1179,12 +1526,10 @@ function buildDroneMesh(skin, parentGroup, droneType, teamColor) {
       exhausts.push(flame);
     }
   }
-
   var wrapper = new THREE.Group(); wrapper.scale.setScalar(scale); wrapper.add(g);
   parentGroup.add(wrapper);
   return { group: wrapper, props: props, iridMats: [], exhausts: exhausts };
 }
-
 function disposeObject3D(obj) {
   obj.traverse(function (o) {
     if (o.geometry) try { o.geometry.dispose(); } catch (e) {}
@@ -1192,7 +1537,6 @@ function disposeObject3D(obj) {
   });
 }
 function disposeGroupSafe(group) { while (group.children.length > 0) group.remove(group.children[0]); }
-
 function applySkin() {
   if (droneMesh) { scene.remove(droneMesh); disposeObject3D(droneMesh); droneMesh = null; }
   var skin = getSkinById(playerData.selectedSkin);
@@ -1313,15 +1657,6 @@ function buildPropAssets(th) {
   return { geo: geo, mat: mat, carMats: carMats };
 }
 function cleanupProps() { propAssets = null; }
-function spawnTree(x, z, scale, rnd) {
-  var p = propAssets; var g = new THREE.Group();
-  var tr = new THREE.Mesh(p.geo.trunk, p.mat.trunk); tr.position.y = 2.2; g.add(tr);
-  var layers = [p.geo.cone0, p.geo.cone1, p.geo.cone2, p.geo.cone3];
-  var yPos = [3.6, 5.3, 6.9, 8.4];
-  var tints = [p.mat.leafDark, p.mat.leaf, p.mat.leafDark, p.mat.leaf2];
-  for (var i = 0; i < layers.length; i++) { var c = new THREE.Mesh(layers[i], tints[i]); c.position.y = yPos[i]; c.rotation.y = rnd() * 6.28; g.add(c); }
-  g.position.set(x, 0, z); g.scale.setScalar(scale); g.rotation.y = rnd() * 6.28; propGroup.add(g);
-}
 function buildCarMesh(p, bodyMat) {
   var g = new THREE.Group();
   var low = new THREE.Mesh(p.geo.carChassisL, bodyMat); low.position.y = 0.62; g.add(low);
@@ -1378,7 +1713,6 @@ function updateMovingCars(dt) {
   }
 }
 function clearMovingCars() { movingCars.length = 0; disposeGroupSafe(carGroup); }
-function clearGroup(g) { while (g.children.length > 0) g.remove(g.children[0]); }
 function applyTheme(th) {
   scene.background = new THREE.Color(th.sky);
   scene.fog.color.setHex(th.sky); scene.fog.near = th.fogNear; scene.fog.far = th.fogFar;
@@ -1387,7 +1721,6 @@ function applyTheme(th) {
   beam.material.color.setHex(th.beam);
   if (cheats.matrix) { scene.background = new THREE.Color(0x001a00); scene.fog.color.setHex(0x002a00); }
 }
-
 function buildWorld() {
   var diff = DIFFS[selDiff], th = THEMES[selTheme];
   if (torusGeo) { torusGeo.dispose(); torusGeo = null; }
@@ -1425,7 +1758,6 @@ function buildWorld() {
   var roofTex = makeRoofTexture(currentSeed + 999, th.roof);
   var roofMat = new THREE.MeshStandardMaterial({ map: roofTex, roughness: 0.95 });
   propAssets = buildPropAssets(th);
-  var roofAux = { roof: roofMat, acBody: propAssets.mat.acBody, acFan: propAssets.mat.acFan, tank: propAssets.mat.tank };
   var cells = 7, density = diff.density;
   var maxH = diff.id === 'hard' ? 130 : (diff.id === 'norm' ? 95 : 70);
   for (var cx = -cells; cx <= cells; cx++) {
@@ -1459,21 +1791,14 @@ function buildWorld() {
       }
       var bld = { x: x, z: z, hw: bw / 2, hd: bd / 2, h: bh, meshes: meshes, color: baseCol, alive: true };
       buildings.push(bld);
-            // Декор крыши
-      var dg = new THREE.Group();
-      dg.position.set(x, 0, z);
+      var dg = new THREE.Group(); dg.position.set(x, 0, z);
       var pT = 0.35, pH = 1.05;
       var pN = new THREE.Mesh(propAssets.geo.parapet, roofMat);
-      pN.scale.set(bw + pT, pH, pT);
-      pN.position.set(0, bh + pH / 2, -bd / 2 + pT / 2);
-      dg.add(pN);
+      pN.scale.set(bw + pT, pH, pT); pN.position.set(0, bh + pH / 2, -bd / 2 + pT / 2); dg.add(pN);
       var pS = new THREE.Mesh(propAssets.geo.parapet, roofMat);
-      pS.scale.set(bw + pT, pH, pT);
-      pS.position.set(0, bh + pH / 2, bd / 2 - pT / 2);
-      dg.add(pS);
+      pS.scale.set(bw + pT, pH, pT); pS.position.set(0, bh + pH / 2, bd / 2 - pT / 2); dg.add(pS);
       var ac = new THREE.Mesh(propAssets.geo.acUnit, propAssets.mat.acBody);
-      ac.position.set(0, bh + 1.1, 0);
-      dg.add(ac);
+      ac.position.set(0, bh + 1.1, 0); dg.add(ac);
       rooftopGroup.add(dg);
       bld.decoGroup = dg;
     }
@@ -1492,6 +1817,7 @@ function buildWorld() {
     for (i = 0; i < n; i++) addDestroyBeacon(candidates[i]);
   } else if (selMission === 'deliver' && !pvp.active) spawnDeliveryPoints(rnd);
   updateGateVisuals(); updateObjectiveUI(); setupMinimap();
+  applyWeather();
 }
 function destroyBuilding(b, impactPos) {
   if (!b.alive) return;
@@ -1499,6 +1825,7 @@ function destroyBuilding(b, impactPos) {
   for (var i = 0; i < b.meshes.length; i++) b.meshes[i].visible = false;
   if (b.decoGroup) b.decoGroup.visible = false;
   spawnBuildingDebris(b, impactPos);
+  playExplosion(1.2);
 }
 function updateGateVisuals() {
   var th = THEMES[selTheme];
@@ -1570,7 +1897,7 @@ function markMissionTarget(b) {
   if (selMission !== 'destroy' || pvp.active) return;
   for (var i = 0; i < missionTargets.length; i++) {
     var t = missionTargets[i];
-    if (t.b === b && !t.destroyed) { t.destroyed = true; missionDestroyed++; awardCoins(20); addMasteryXP(15); updateObjectiveUI(); if (missionDestroyed >= missionTargets.length) winGame(); return; }
+    if (t.b === b && !t.destroyed) { t.destroyed = true; missionDestroyed++; awardCoins(20); addMasteryXP(15); updateObjectiveUI(); playChime(880, 0.18); if (missionDestroyed >= missionTargets.length) winGame(); return; }
   }
 }
 
@@ -1617,7 +1944,7 @@ function updateFragments(dt) {
   }
 }
 
-var sparkPool = [], debrisPool = [], ringPool = [], sparkTex = null;
+var sparkPool = [], debrisPool = [], sparkTex = null;
 function initExplosion() {
   var S = 64; var cv = document.createElement('canvas'); cv.width = S; cv.height = S;
   var g = cv.getContext('2d');
@@ -1642,6 +1969,7 @@ function aqSpark() { for (var i = 0; i < sparkPool.length; i++) if (!sparkPool[i
 function aqDebris() { for (var i = 0; i < debrisPool.length; i++) if (!debrisPool[i].active) return debrisPool[i]; return null; }
 function spawnExplosion(pos, vel, scale) {
   scale = scale || 1;
+  playExplosion(scale);
   var i;
   for (i = 0; i < Math.round(35 * scale); i++) {
     var p = aqSpark(); if (!p) break;
@@ -1695,7 +2023,6 @@ function updateExplosion(dt) {
   if (explLightTimer > 0) { explLightTimer -= dt; explLight.intensity = Math.max(0, explLight.intensity - dt * 45); if (explLightTimer <= 0) explLight.intensity = 0; }
 }
 
-// СНАРЯДЫ ИГРОКА
 var projGeo = new THREE.SphereGeometry(0.5, 10, 8);
 function initProjectiles() {
   for (var i = 0; i < PROJECTILE_POOL; i++) {
@@ -1720,6 +2047,7 @@ function fireProjectile() {
   p.vel.copy(vFwdGlobal).multiplyScalar(PROJECTILE_SPEED);
   p.vel.addScaledVector(drone.vel, 0.5);
   p.mesh.visible = true;
+  playFire();
 }
 function updateProjectiles(dt) {
   if (fireCooldown > 0) fireCooldown -= dt;
@@ -1732,7 +2060,6 @@ function updateProjectiles(dt) {
     if (p.mesh.position.y < 0.3) { spawnExplosion(p.mesh.position.clone(), new THREE.Vector3(), 0.5); p.active = false; p.mesh.visible = false; continue; }
     var pp = p.mesh.position;
     var hit = false;
-    // Столкновение с ботами (враги)
     if (pvp.active && !p.hostile) {
       for (var e = 0; e < pvp.enemies.length; e++) {
         var en = pvp.enemies[e];
@@ -1745,7 +2072,6 @@ function updateProjectiles(dt) {
       }
       if (hit) continue;
     }
-    // Столкновение со зданиями
     for (var j = 0; j < buildings.length; j++) {
       var b = buildings[j]; if (!b.alive) continue;
       if (pp.y < b.h + 0.5 && Math.abs(pp.x - b.x) < b.hw + 0.5 && Math.abs(pp.z - b.z) < b.hd + 0.5) {
@@ -1772,6 +2098,7 @@ function tryUseAbility() {
   activateAbility(d.id, ab, info.level);
 }
 function activateAbility(droneId, ab, level) {
+  playAbility();
   var m = level >= 4 ? 1.5 : (level >= 3 ? 1.25 : 1.0);
   abilityState.type = droneId; abilityState.duration = ab.dur * m; abilityState.timer = abilityState.duration;
   abilityState.cooldownMax = ab.cd * (level >= 4 ? 0.7 : (level >= 3 ? 0.85 : 1.0));
@@ -1872,7 +2199,7 @@ function execCommand(raw) {
   printConsole('> ' + cmd, 'dim');
   var parts = cmd.split(/\s+/); var name = parts[0].toLowerCase(); var args = parts.slice(1);
   switch (name) {
-    case 'help': case '?': printConsole('noclip god moon jupiter slowmo speedrun tiny giant matrix rainbow dance party coins xp mastery maxmastery masteryon masteryoff masterytoggle nuke tp whereami theme seed vr pvp exit clear', 'info'); break;
+    case 'help': case '?': printConsole('noclip god moon jupiter slowmo speedrun tiny giant matrix rainbow dance party coins xp mastery maxmastery masteryon masteryoff masterytoggle nuke tp whereami theme seed weather sound vr pvp exit clear', 'info'); break;
     case 'exit': case 'quit': closeConsole(); break;
     case 'hello': case 'hi': printConsole('hello, pilot.', 'ok'); break;
     case 'whoami': printConsole('pilot#' + myId, 'ok'); break;
@@ -1904,6 +2231,8 @@ function execCommand(raw) {
     case 'tp': if (args[0]) { var idx = parseInt(args[0], 10); if (idx >= 0 && idx < gates.length) { drone.pos.copy(gates[idx].pos); drone.vel.set(0,0,0); printConsole('tp', 'ok'); } } break;
     case 'whereami': printConsole('x=' + drone.pos.x.toFixed(1) + ' y=' + drone.pos.y.toFixed(1) + ' z=' + drone.pos.z.toFixed(1), 'ok'); break;
     case 'theme': if (args[0]) { var th = parseInt(args[0], 10); if (th >= 0 && th < THEMES.length) { selTheme = th; builtKey = ''; ensureWorld(); syncMenuButtons(); } } break;
+    case 'weather': if (args[0]) { var wi = parseInt(args[0], 10); if (wi >= 0 && wi < WEATHERS.length) { selWeather = wi; applyWeather(); syncMenuButtons(); toastMsg(WEATHERS[wi].name); } } else { selWeather = (selWeather + 1) % WEATHERS.length; applyWeather(); syncMenuButtons(); toastMsg(WEATHERS[selWeather].name); } break;
+    case 'sound': setSoundEnabled(!soundEnabled); if (typeof refreshSoundToggleUI === 'function') refreshSoundToggleUI(); printConsole('sound ' + (soundEnabled ? 'ON' : 'OFF'), 'ok'); break;
     case 'seed': if (args[0]) { currentSeed = parseInt(args[0], 10) | 0; builtKey = ''; ensureWorld(); } break;
     case 'vr': if (args[0] === 'on') enterVR(); else if (args[0] === 'off') exitVR(); break;
     case 'pvp': if (args[0] === '1v1') startPvP('1v1bot'); else if (args[0] === '1v2') startPvP('1v2bot'); else if (args[0] === '2v2') startPvP('2v2bot'); else if (args[0] === 'stop') stopPvP(); break;
@@ -1932,7 +2261,6 @@ document.getElementById('menuVersion').addEventListener('click', function(){
   if (verTaps >= 3) { verTaps = 0; openConsole(); }
 });
 
-// UI элементы
 var elTime = document.getElementById('vTime'), elSpeed = document.getElementById('vSpeed'), elAlt = document.getElementById('vAlt'), elCrash = document.getElementById('vCrash');
 var elThr = document.getElementById('thrFill'), thrMark = document.getElementById('thrMark');
 var menuEl = document.getElementById('menu'), btnEl = document.getElementById('btn'), btn2El = document.getElementById('btn2');
@@ -1943,61 +2271,147 @@ var seedVal = document.getElementById('seedVal'), bestVal = document.getElementB
 var winStats = document.getElementById('winStats'), menuOpts = document.getElementById('menuOpts'), menuTitle = document.getElementById('menuTitle'), menuSub = document.getElementById('menuSub');
 var viewBtnEl = document.getElementById('viewBtn');
 var mmCanvas = document.getElementById('minimap'), mmCtx = mmCanvas.getContext('2d');
+lightningFlashEl = document.getElementById('lightningFlash');
 
 function updateThrMark() { thrMark.style.bottom = 'calc(50% - 70px + ' + (getDrone().hover * 140) + 'px)'; }
 updateThrMark();
 
-var mmCss = 0, mmDpr = 1, mmScale = 1, mmCx = 0, mmCz = 0;
+var mmCss = 0, mmDpr = 1;
+
+// ════════════════════════════════════════════════════════════
+//  ПАТЧ 2 — Миникарта следит за игроком + всё показывает
+// ════════════════════════════════════════════════════════════
 function setupMinimap() {
-  if (!coursePts.length) return;
   mmCss = mmCanvas.clientWidth || 90;
   mmDpr = Math.min(window.devicePixelRatio || 1, 2);
-  mmCanvas.width = Math.round(mmCss * mmDpr); mmCanvas.height = Math.round(mmCss * mmDpr);
-  var minX = 1e9, maxX = -1e9, minZ = 1e9, maxZ = -1e9;
-  var all = coursePts.concat([[START_POS.x, START_POS.y, START_POS.z]]);
-  for (var i = 0; i < all.length; i++) {
-    var p = all[i];
-    if (p[0] < minX) minX = p[0]; if (p[0] > maxX) maxX = p[0];
-    if (p[2] < minZ) minZ = p[2]; if (p[2] > maxZ) maxZ = p[2];
-  }
-  mmCx = (minX + maxX) / 2; mmCz = (minZ + maxZ) / 2;
-  mmScale = mmCss / (Math.max(maxX - minX, maxZ - minZ, 60) * 1.22);
+  mmCanvas.width = Math.round(mmCss * mmDpr);
+  mmCanvas.height = Math.round(mmCss * mmDpr);
 }
 function drawMinimap() {
   if (!mmCss) return;
   var s = mmCss;
+  var viewR = pvp.active ? 100 : 200;
+  var scale = (s / 2 - 4) / viewR;
   mmCtx.setTransform(mmDpr, 0, 0, mmDpr, 0, 0);
   mmCtx.clearRect(0, 0, s, s);
-  mmCtx.beginPath(); mmCtx.arc(s/2, s/2, s/2 - 1, 0, Math.PI * 2);
-  mmCtx.fillStyle = 'rgba(5,12,22,0.55)'; mmCtx.fill();
-  mmCtx.lineWidth = 1.5; mmCtx.strokeStyle = 'rgba(90,180,255,0.28)'; mmCtx.stroke();
-  var toMap = function (x, z) { return [s/2 + (x - mmCx) * mmScale, s/2 + (z - mmCz) * mmScale]; };
+  mmCtx.beginPath(); mmCtx.arc(s / 2, s / 2, s / 2 - 1, 0, Math.PI * 2);
+  mmCtx.fillStyle = 'rgba(5,12,22,0.72)'; mmCtx.fill();
+  mmCtx.lineWidth = 1.5;
+  mmCtx.strokeStyle = pvp.active ? 'rgba(255,90,80,0.65)' : 'rgba(90,180,255,0.4)';
+  mmCtx.stroke();
+  mmCtx.save();
+  mmCtx.beginPath(); mmCtx.arc(s / 2, s / 2, s / 2 - 1.5, 0, Math.PI * 2); mmCtx.clip();
+  var cx = drone.pos.x, cz = drone.pos.z;
+  var toMap = function (x, z) { return [s / 2 + (x - cx) * scale, s / 2 + (z - cz) * scale]; };
+  mmCtx.fillStyle = 'rgba(120,150,180,0.42)';
+  for (var bi = 0; bi < buildings.length; bi++) {
+    var b = buildings[bi];
+    if (!b.alive) continue;
+    var bdx = b.x - cx, bdz = b.z - cz;
+    if (Math.abs(bdx) > viewR + 30 || Math.abs(bdz) > viewR + 30) continue;
+    var bp = toMap(b.x, b.z);
+    var bw2 = b.hw * 2 * scale, bh2 = b.hd * 2 * scale;
+    mmCtx.fillRect(bp[0] - bw2 / 2, bp[1] - bh2 / 2, bw2, bh2);
+  }
   if (!pvp.active) {
-    for (var i = 0; i < gates.length; i++) {
-      var g = gates[i]; var q2 = toMap(g.pos.x, g.pos.z);
-      mmCtx.beginPath(); mmCtx.arc(q2[0], q2[1], i === nextGateIdx && selMission === 'race' ? 4.2 : 2.3, 0, Math.PI * 2);
-      if (g.passed) mmCtx.fillStyle = '#00ff9d'; else if (i === nextGateIdx && selMission === 'race') mmCtx.fillStyle = '#00e5ff'; else mmCtx.fillStyle = 'rgba(90,180,255,0.32)';
+    if (coursePts.length > 0) {
+      mmCtx.beginPath();
+      var sp = toMap(START_POS.x, START_POS.z);
+      mmCtx.moveTo(sp[0], sp[1]);
+      for (var ci = 0; ci < coursePts.length; ci++) {
+        var q = toMap(coursePts[ci][0], coursePts[ci][2]);
+        mmCtx.lineTo(q[0], q[1]);
+      }
+      mmCtx.lineWidth = 1.2;
+      mmCtx.strokeStyle = 'rgba(90,180,255,0.28)';
+      mmCtx.stroke();
+    }
+    for (var gi = 0; gi < gates.length; gi++) {
+      var g = gates[gi];
+      var gdx = g.pos.x - cx, gdz = g.pos.z - cz;
+      if (Math.abs(gdx) > viewR + 15 || Math.abs(gdz) > viewR + 15) continue;
+      var gp = toMap(g.pos.x, g.pos.z);
+      var isNext = gi === nextGateIdx && selMission === 'race';
+      mmCtx.beginPath();
+      mmCtx.arc(gp[0], gp[1], isNext ? 4 : 2.5, 0, Math.PI * 2);
+      if (g.passed) mmCtx.fillStyle = '#00ff9d';
+      else if (isNext) mmCtx.fillStyle = '#00e5ff';
+      else mmCtx.fillStyle = 'rgba(90,180,255,0.5)';
       mmCtx.fill();
     }
-  } else {
-    // В PvP — враги и союзники
-    for (var e = 0; e < pvp.enemies.length; e++) {
-      var en = pvp.enemies[e]; if (!en.alive) continue;
-      var pe = toMap(en.drone.pos.x, en.drone.pos.z);
-      mmCtx.beginPath(); mmCtx.arc(pe[0], pe[1], 3.5, 0, Math.PI * 2); mmCtx.fillStyle = '#ff4040'; mmCtx.fill();
+    if (missionPickup && missionCargo === 'none' && missionPickup.pos) {
+      var q4 = toMap(missionPickup.pos.x, missionPickup.pos.z);
+      mmCtx.beginPath(); mmCtx.arc(q4[0], q4[1], 4.5, 0, Math.PI * 2);
+      mmCtx.fillStyle = '#00e5ff'; mmCtx.fill();
+      mmCtx.strokeStyle = '#ffffff'; mmCtx.lineWidth = 1.2; mmCtx.stroke();
     }
-    for (var a = 0; a < pvp.allies.length; a++) {
-      var al = pvp.allies[a]; if (!al.alive) continue;
-      var pa = toMap(al.drone.pos.x, al.drone.pos.z);
-      mmCtx.beginPath(); mmCtx.arc(pa[0], pa[1], 3.5, 0, Math.PI * 2); mmCtx.fillStyle = '#40a0ff'; mmCtx.fill();
+    if (missionDropoff && missionCargo === 'carried' && missionDropoff.pos) {
+      var q5 = toMap(missionDropoff.pos.x, missionDropoff.pos.z);
+      mmCtx.beginPath(); mmCtx.arc(q5[0], q5[1], 4.5, 0, Math.PI * 2);
+      mmCtx.fillStyle = '#ffd040'; mmCtx.fill();
+      mmCtx.strokeStyle = '#ffffff'; mmCtx.lineWidth = 1.2; mmCtx.stroke();
+    }
+    for (var mi = 0; mi < missionTargets.length; mi++) {
+      var mt = missionTargets[mi];
+      if (mt.destroyed) continue;
+      var mdx = mt.b.x - cx, mdz = mt.b.z - cz;
+      if (Math.abs(mdx) > viewR + 20 || Math.abs(mdz) > viewR + 20) continue;
+      var mp = toMap(mt.b.x, mt.b.z);
+      mmCtx.beginPath(); mmCtx.arc(mp[0], mp[1], 4, 0, Math.PI * 2);
+      mmCtx.fillStyle = '#ff3020'; mmCtx.fill();
+      mmCtx.strokeStyle = '#ffffff'; mmCtx.lineWidth = 1; mmCtx.stroke();
     }
   }
-  var d = toMap(drone.pos.x, drone.pos.z);
-  var eulS = new THREE.Euler(0,0,0,'YXZ'); eulS.setFromQuaternion(drone.quat, 'YXZ');
-  mmCtx.save(); mmCtx.translate(d[0], d[1]); mmCtx.rotate(-eulS.y);
-  mmCtx.beginPath(); mmCtx.moveTo(0, -6.5); mmCtx.lineTo(4.2, 5); mmCtx.lineTo(0, 2.6); mmCtx.lineTo(-4.2, 5); mmCtx.closePath();
-  mmCtx.fillStyle = '#eaf7ff'; mmCtx.fill(); mmCtx.restore();
+  for (var ei = 0; ei < pvp.enemies.length; ei++) {
+    var en = pvp.enemies[ei];
+    if (!en.alive) continue;
+    var edx = en.pos.x - cx, edz = en.pos.z - cz;
+    if (Math.abs(edx) > viewR + 20 || Math.abs(edz) > viewR + 20) continue;
+    var ep = toMap(en.pos.x, en.pos.z);
+    mmCtx.beginPath(); mmCtx.arc(ep[0], ep[1], 3.6, 0, Math.PI * 2);
+    mmCtx.fillStyle = '#ff3030'; mmCtx.fill();
+    mmCtx.strokeStyle = '#ffffff'; mmCtx.lineWidth = 1; mmCtx.stroke();
+  }
+  for (var ai2 = 0; ai2 < pvp.allies.length; ai2++) {
+    var al = pvp.allies[ai2];
+    if (!al.alive) continue;
+    var adx = al.pos.x - cx, adz = al.pos.z - cz;
+    if (Math.abs(adx) > viewR + 20 || Math.abs(adz) > viewR + 20) continue;
+    var ap = toMap(al.pos.x, al.pos.z);
+    mmCtx.beginPath(); mmCtx.arc(ap[0], ap[1], 3.6, 0, Math.PI * 2);
+    mmCtx.fillStyle = '#40a0ff'; mmCtx.fill();
+    mmCtx.strokeStyle = '#ffffff'; mmCtx.lineWidth = 1; mmCtx.stroke();
+  }
+  for (var id in remotePlayers) {
+    var rp = remotePlayers[id];
+    var rdx = rp.currentPos.x - cx, rdz = rp.currentPos.z - cz;
+    if (Math.abs(rdx) > viewR + 20 || Math.abs(rdz) > viewR + 20) continue;
+    var q6 = toMap(rp.currentPos.x, rp.currentPos.z);
+    var colHex = '#' + ((rp.color || 0x00e5ff) >>> 0).toString(16).padStart(6, '0');
+    mmCtx.beginPath(); mmCtx.arc(q6[0], q6[1], 3.4, 0, Math.PI * 2);
+    mmCtx.fillStyle = colHex; mmCtx.fill();
+    mmCtx.strokeStyle = '#ffffff'; mmCtx.lineWidth = 1; mmCtx.stroke();
+  }
+  mmCtx.restore();
+  var eulS = new THREE.Euler(0, 0, 0, 'YXZ');
+  eulS.setFromQuaternion(drone.quat, 'YXZ');
+  mmCtx.save();
+  mmCtx.translate(s / 2, s / 2);
+  mmCtx.rotate(-eulS.y);
+  mmCtx.beginPath();
+  mmCtx.moveTo(0, -7);
+  mmCtx.lineTo(5, 6);
+  mmCtx.lineTo(0, 3);
+  mmCtx.lineTo(-5, 6);
+  mmCtx.closePath();
+  mmCtx.fillStyle = '#eaf7ff';
+  mmCtx.fill();
+  mmCtx.strokeStyle = '#00e5ff';
+  mmCtx.lineWidth = 1.5;
+  mmCtx.stroke();
+  mmCtx.restore();
 }
+
 function getCurrentObjectivePos() {
   if (pvp.active) {
     var best = null, bestD = 1e9;
@@ -2043,7 +2457,6 @@ var vPrev = new THREE.Vector3(), vCur = new THREE.Vector3(), vHit = new THREE.Ve
 function respawn() {
   var p, d;
   if (pvp.active) {
-    // спавн в своей базе
     var ang = Math.random() * Math.PI * 2;
     var r = 60;
     p = new THREE.Vector3(START_POS.x + Math.cos(ang) * r, 20, START_POS.z + Math.sin(ang) * r);
@@ -2093,6 +2506,7 @@ function passGate(g) {
   g.passed = true; lastGate = g;
   if (selMission === 'race' && !pvp.active) {
     awardCoins(10 * DIFFS[selDiff].coinMul); addMasteryXP(8);
+    playChime(660, 0.14);
     updateGateVisuals(); updateObjectiveUI();
     mqttPublish({ t: 'gate', id: myId, idx: gates.indexOf(g) });
     var all = true; for (var i = 0; i < gates.length; i++) if (!gates[i].passed) { all = false; break; }
@@ -2106,6 +2520,7 @@ function refreshBest() { var b = getBest(); bestVal.textContent = b === null ? '
 function winGame() {
   if (state !== 'playing' || pvp.active) return;
   state = 'won';
+  playChime(1040, 0.5);
   var base = 150 * DIFFS[selDiff].coinMul;
   if (crashes === 0) base += 200;
   awardCoins(base); addMasteryXP(50);
@@ -2166,6 +2581,11 @@ function updatePhysics(dt) {
   vAcc.copy(vUp).multiplyScalar(input.throttle * d.maxThrust * aMul);
   vAcc.y -= d.gravity * gMul;
   if (input.pitch < -0.05) { var fwdAmt = -input.pitch; vFwd.set(0, 0, -1).applyQuaternion(drone.quat); vFwd.y = 0; if (vFwd.lengthSq() > 0.01) { vFwd.normalize(); vAcc.addScaledVector(vFwd, d.fwdBoost * aMul * fwdAmt); } }
+  var windF = getWindForce();
+  if (windF > 0 && !cheats.god) {
+    vAcc.x += weatherState.wind.x * windF * 3.2;
+    vAcc.z += weatherState.wind.y * windF * 3.2;
+  }
   drone.vel.addScaledVector(vAcc, dt);
   drone.vel.multiplyScalar(Math.exp(-d.drag * dt));
   var sp = drone.vel.length(), maxSp = d.maxSpeed * sMul;
@@ -2189,7 +2609,7 @@ function checkDelivery() {
   if (selMission !== 'deliver' || pvp.active) return;
   if (missionCargo === 'none' && missionPickup) {
     var d = Math.hypot(drone.pos.x - missionPickup.pos.x, drone.pos.z - missionPickup.pos.z);
-    if (d < DELIVER_RADIUS && Math.abs(drone.pos.y - 8) < 10) { missionCargo = 'carried'; cargoCarrierId = myId; if (missionPickup.mesh) missionPickup.mesh.visible = false; if (missionCargoMesh) missionCargoMesh.visible = true; awardCoins(30 * DIFFS[selDiff].coinMul); addMasteryXP(20); updateObjectiveUI(); }
+    if (d < DELIVER_RADIUS && Math.abs(drone.pos.y - 8) < 10) { missionCargo = 'carried'; cargoCarrierId = myId; if (missionPickup.mesh) missionPickup.mesh.visible = false; if (missionCargoMesh) missionCargoMesh.visible = true; awardCoins(30 * DIFFS[selDiff].coinMul); addMasteryXP(20); playChime(780, 0.16); updateObjectiveUI(); }
   } else if (missionCargo === 'carried' && cargoCarrierId === myId && missionDropoff) {
     var dd = Math.hypot(drone.pos.x - missionDropoff.pos.x, drone.pos.z - missionDropoff.pos.z);
     if (dd < DELIVER_RADIUS && Math.abs(drone.pos.y - 8) < 10) { missionCargo = 'delivered'; if (missionCargoMesh) missionCargoMesh.visible = false; addMasteryXP(40); updateObjectiveUI(); winGame(); }
@@ -2239,71 +2659,55 @@ function updateViewBtn() { if (viewBtnEl) viewBtnEl.textContent = playerData.thi
 
 var lastT = performance.now();
 var lastXpTick = 0;
+
 // ════════════════════════════════════════════════════════════
 //  БОТЫ И PVP
 // ════════════════════════════════════════════════════════════
-
 function createBot(team, skinId, droneId, aiLevel) {
-  skinId = skinId || 'default';
-  droneId = droneId || 'standard';
-  aiLevel = aiLevel || 1; // 1 — простой, 2 — средний, 3 — сложный
+  skinId = skinId || 'default'; droneId = droneId || 'standard'; aiLevel = aiLevel || 1;
   var skin = getSkinById(skinId);
   var dron = DRONES[0];
   for (var i = 0; i < DRONES.length; i++) if (DRONES[i].id === droneId) { dron = DRONES[i]; break; }
-
   var teamCol = team === 'red' ? 0xff3030 : 0x3090ff;
   var useSkin = skin;
   if (skin.id === 'default') useSkin = { id:'default', body:teamCol, accent:teamCol, arm:skin.arm, motor:skin.motor, prop:skin.prop, glow:teamCol, irid:false };
-
   var r = buildDroneMesh(useSkin, aiGroup, dron, teamCol);
-  var ang = Math.random() * Math.PI * 2;
-  var spawnR = 70;
-  var bx = START_POS.x + Math.cos(ang) * spawnR;
-  var bz = START_POS.z + Math.sin(ang) * spawnR;
+
+  // ═══ ПАТЧ 1 — спавн перед игроком ═══
+  var fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(drone.quat);
+  var fx = drone.pos.x + fwd.x * 55;
+  var fz = drone.pos.z + fwd.z * 55;
+  var bx = fx + (Math.random() - 0.5) * 30;
+  var bz = fz + (Math.random() - 0.5) * 30;
+  var by = 28 + Math.random() * 8;
 
   var bot = {
     id: 'bot_' + Math.random().toString(36).substring(2, 8),
-    team: team,
-    aiLevel: aiLevel,
-    droneType: dron,
-    mesh: r.group,
-    props: r.props || [],
-    exhausts: r.exhausts || [],
-    pos: new THREE.Vector3(bx, 20, bz),
-    prev: new THREE.Vector3(bx, 20, bz),
-    vel: new THREE.Vector3(),
-    quat: new THREE.Quaternion(),
-    alive: true,
-    hp: PVP_HP_MAX,
-    kills: 0,
-    deaths: 0,
-    respawnTimer: 0,
-    fireCooldown: 0,
-    decisionTimer: 0,
-    mode: 'patrol',         // 'patrol' | 'chase' | 'attack' | 'evade'
-    target: null,
-    waypoint: new THREE.Vector3(bx + (Math.random() - 0.5) * 80, 20, bz + (Math.random() - 0.5) * 80),
-        patrolTimer: 0
+    team: team, aiLevel: aiLevel, droneType: dron,
+    mesh: r.group, props: r.props || [], exhausts: r.exhausts || [],
+    pos: new THREE.Vector3(bx, by, bz), prev: new THREE.Vector3(bx, by, bz),
+    vel: new THREE.Vector3(), quat: new THREE.Quaternion(),
+    alive: true, hp: PVP_HP_MAX, kills: 0, deaths: 0,
+    respawnTimer: 0, fireCooldown: 0, decisionTimer: 0,
+    mode: 'patrol', target: null,
+    waypoint: new THREE.Vector3(bx + (Math.random() - 0.5) * 80, by, bz + (Math.random() - 0.5) * 80),
+    patrolTimer: 0
   };
-  bot.drone = bot; // алиас — чтобы код мог обращаться к bot.drone.pos / .quat / .vel
+  bot.drone = bot;
   bot.mesh.position.copy(bot.pos);
   bot.mesh.visible = true;
   return bot;
 }
-
 function disposeBot(bot) {
   if (bot.mesh) { aiGroup.remove(bot.mesh); disposeObject3D(bot.mesh); bot.mesh = null; }
 }
-
 function clearBots() {
   for (var i = 0; i < pvp.enemies.length; i++) disposeBot(pvp.enemies[i]);
   for (var j = 0; j < pvp.allies.length; j++) disposeBot(pvp.allies[j]);
-  pvp.enemies.length = 0;
-  pvp.allies.length = 0;
-  for (var k = 0; k < pvp.projectiles.length; k++) { if (pvp.projectiles[k].mesh) { aiGroup.remove(pvp.projectiles[k].mesh); } }
+  pvp.enemies.length = 0; pvp.allies.length = 0;
+  for (var k = 0; k < pvp.projectiles.length; k++) { if (pvp.projectiles[k].mesh) aiGroup.remove(pvp.projectiles[k].mesh); }
   pvp.projectiles.length = 0;
 }
-
 function botFireProjectile(bot) {
   if (bot.fireCooldown > 0 || !bot.alive) return;
   bot.fireCooldown = 0.55 + Math.random() * 0.35;
@@ -2312,16 +2716,9 @@ function botFireProjectile(bot) {
   var m = new THREE.Mesh(projGeo, mat);
   m.position.copy(bot.pos).addScaledVector(dir, 2.5);
   aiGroup.add(m);
-  pvp.projectiles.push({
-    mesh: m,
-    pos: m.position.clone(),
-    vel: dir.clone().multiplyScalar(PROJECTILE_SPEED * 0.85),
-    life: 0,
-    owner: bot,
-    team: bot.team
-  });
+  pvp.projectiles.push({ mesh: m, pos: m.position.clone(), vel: dir.clone().multiplyScalar(PROJECTILE_SPEED * 0.85), life: 0, owner: bot, team: bot.team });
+  playFire();
 }
-
 function updateBotProjectiles(dt) {
   for (var i = pvp.projectiles.length - 1; i >= 0; i--) {
     var p = pvp.projectiles[i];
@@ -2331,15 +2728,12 @@ function updateBotProjectiles(dt) {
     p.pos.addScaledVector(p.vel, dt);
     if (p.mesh) p.mesh.position.copy(p.pos);
     if (p.pos.y < 0.3) { spawnExplosion(p.pos.clone(), new THREE.Vector3(), 0.4); if (p.mesh) aiGroup.remove(p.mesh); pvp.projectiles.splice(i, 1); continue; }
-    // Столкновение с игроком
     if (p.team !== pvp.myTeam && p.pos.distanceTo(drone.pos) < 2.5) {
       spawnExplosion(p.pos.clone(), p.vel.clone().multiplyScalar(0.2), 1.0);
       playerTakeDamage(PVP_HIT_DAMAGE, 'bot');
       if (p.mesh) aiGroup.remove(p.mesh);
-      pvp.projectiles.splice(i, 1);
-      continue;
+      pvp.projectiles.splice(i, 1); continue;
     }
-    // Столкновение с ботами других команд
     var hit = false;
     if (p.team === 'red') {
       for (var e = 0; e < pvp.allies.length; e++) {
@@ -2355,45 +2749,33 @@ function updateBotProjectiles(dt) {
       }
     }
     if (hit) continue;
-    // Столкновение со зданиями
     for (var j = 0; j < buildings.length; j++) {
       var b = buildings[j]; if (!b.alive) continue;
       if (p.pos.y < b.h + 0.5 && Math.abs(p.pos.x - b.x) < b.hw + 0.5 && Math.abs(p.pos.z - b.z) < b.hd + 0.5) {
         spawnExplosion(p.pos.clone(), p.vel.clone().multiplyScalar(0.2), 0.8);
         destroyBuilding(b, p.pos.clone());
         if (p.mesh) aiGroup.remove(p.mesh);
-        pvp.projectiles.splice(i, 1);
-        break;
+        pvp.projectiles.splice(i, 1); break;
       }
     }
   }
 }
-
 function updateBot(bot, dt) {
   if (!bot.alive) {
     if (bot.respawnTimer > 0) {
       bot.respawnTimer -= dt;
       if (bot.respawnTimer <= 0) {
-        bot.alive = true;
-        bot.hp = PVP_HP_MAX;
+        bot.alive = true; bot.hp = PVP_HP_MAX;
         var ang = Math.random() * Math.PI * 2;
         bot.pos.set(START_POS.x + Math.cos(ang) * 80, 20, START_POS.z + Math.sin(ang) * 80);
-        bot.prev.copy(bot.pos);
-        bot.vel.set(0, 0, 0);
-        bot.mesh.visible = true;
+        bot.prev.copy(bot.pos); bot.vel.set(0, 0, 0); bot.mesh.visible = true;
       }
     }
     return;
   }
-
-  bot.fireCooldown -= dt;
-  bot.decisionTimer -= dt;
-  bot.patrolTimer -= dt;
-
-  // Найти ближайшего врага
+  bot.fireCooldown -= dt; bot.decisionTimer -= dt; bot.patrolTimer -= dt;
   var nearest = null, nearestDist = 1e9;
   if (bot.team === 'red') {
-    // Красный бот атакует игрока (если он синий) и синих ботов
     if (pvp.myTeam === 'blue') {
       var d = bot.pos.distanceTo(drone.pos);
       if (d < nearestDist) { nearestDist = d; nearest = { isPlayer: true, pos: drone.pos, quat: drone.quat }; }
@@ -2404,7 +2786,6 @@ function updateBot(bot, dt) {
       if (da < nearestDist) { nearestDist = da; nearest = { isBot: true, bot: a }; }
     }
   } else {
-    // Синий бот атакует игрока (если он красный) и красных ботов
     if (pvp.myTeam === 'red') {
       var d2 = bot.pos.distanceTo(drone.pos);
       if (d2 < nearestDist) { nearestDist = d2; nearest = { isPlayer: true, pos: drone.pos, quat: drone.quat }; }
@@ -2415,7 +2796,6 @@ function updateBot(bot, dt) {
       if (da2 < nearestDist) { nearestDist = da2; nearest = { isBot: true, bot: a2 }; }
     }
   }
-
   var targetPos = null, targetQuat = null;
   if (nearest) {
     if (nearest.isBot) { targetPos = nearest.bot.pos; targetQuat = nearest.bot.quat; }
@@ -2423,15 +2803,10 @@ function updateBot(bot, dt) {
     if (nearestDist < 150) bot.mode = 'attack';
     else if (nearestDist < 250) bot.mode = 'chase';
     else bot.mode = 'patrol';
-  } else {
-    bot.mode = 'patrol';
-  }
-
+  } else bot.mode = 'patrol';
   var desiredYaw = 0, desiredPitch = 0;
   var throttle = bot.droneType.hover;
-
   if (bot.mode === 'attack' && targetPos) {
-    // Поворот к цели
     var toTarget = _tmp.copy(targetPos).sub(bot.pos);
     var targetYaw = Math.atan2(toTarget.x, -toTarget.z);
     var eulB = new THREE.Euler(0, 0, 0, 'YXZ');
@@ -2441,11 +2816,7 @@ function updateBot(bot, dt) {
     while (dy < -Math.PI) dy += Math.PI * 2;
     desiredYaw = clamp(dy * 2, -1, 1);
     desiredPitch = clamp(toTarget.y > 0 ? -0.3 : 0.3, -0.6, 0.6);
-    // Автоматическая стрельба
-    if (nearestDist < 120 && Math.abs(dy) < 0.5) {
-      botFireProjectile(bot);
-    }
-    // Простая автоматика: цель чуть выше бота
+    if (nearestDist < 120 && Math.abs(dy) < 0.5) botFireProjectile(bot);
     throttle = clamp(bot.droneType.hover + (targetPos.y - bot.pos.y) * 0.02, 0.3, 0.8);
   } else if (bot.mode === 'chase' && targetPos) {
     var toT = _tmp.copy(targetPos).sub(bot.pos);
@@ -2459,14 +2830,9 @@ function updateBot(bot, dt) {
     desiredPitch = -0.5;
     throttle = clamp(bot.droneType.hover + (targetPos.y - bot.pos.y) * 0.015, 0.35, 0.7);
   } else {
-    // Патруль
     if (bot.patrolTimer <= 0) {
       bot.patrolTimer = 4 + Math.random() * 4;
-      bot.waypoint.set(
-        START_POS.x + (Math.random() - 0.5) * 200,
-        15 + Math.random() * 30,
-        START_POS.z + (Math.random() - 0.5) * 200
-      );
+      bot.waypoint.set(START_POS.x + (Math.random() - 0.5) * 200, 15 + Math.random() * 30, START_POS.z + (Math.random() - 0.5) * 200);
     }
     var toW = _tmp.copy(bot.waypoint).sub(bot.pos);
     if (toW.length() < 5) { bot.waypoint.set(START_POS.x + (Math.random() - 0.5) * 200, 15 + Math.random() * 30, START_POS.z + (Math.random() - 0.5) * 200); }
@@ -2480,8 +2846,6 @@ function updateBot(bot, dt) {
     desiredPitch = -0.2;
     throttle = clamp(bot.droneType.hover + (bot.waypoint.y - bot.pos.y) * 0.015, 0.4, 0.6);
   }
-
-  // Избегание зданий (простое)
   var avoidX = 0, avoidZ = 0;
   for (var bi = 0; bi < buildings.length; bi++) {
     var b = buildings[bi]; if (!b.alive) continue;
@@ -2492,8 +2856,6 @@ function updateBot(bot, dt) {
       if (d > 0.1) { avoidX += (dx / d) * push; avoidZ += (dz / d) * push; }
     }
   }
-
-  // Применение ориентации
   var yawRate = desiredYaw * bot.droneType.maxYaw;
   var pitchRate = desiredPitch * bot.droneType.maxPitch;
   eul.set(pitchRate * dt, yawRate * dt, 0, 'YXZ');
@@ -2503,36 +2865,25 @@ function updateBot(bot, dt) {
   var cP = clamp(eul.x, -bot.droneType.tiltFwd, bot.droneType.tiltBack);
   if (cP !== eul.x) { eul.x = cP; bot.quat.setFromEuler(eul); }
   bot.quat.normalize();
-
-  // Физика
   var vUpB = new THREE.Vector3(0, 1, 0).applyQuaternion(bot.quat);
   var vAccB = vUpB.clone().multiplyScalar(throttle * bot.droneType.maxThrust);
   vAccB.y -= bot.droneType.gravity;
-  // Forward boost
   if (desiredPitch < -0.1) {
     var vFwdB = new THREE.Vector3(0, 0, -1).applyQuaternion(bot.quat);
     vFwdB.y = 0;
-    if (vFwdB.lengthSq() > 0.01) {
-      vFwdB.normalize();
-      vAccB.addScaledVector(vFwdB, bot.droneType.fwdBoost * -desiredPitch);
-    }
+    if (vFwdB.lengthSq() > 0.01) { vFwdB.normalize(); vAccB.addScaledVector(vFwdB, bot.droneType.fwdBoost * -desiredPitch); }
   }
-  // Обход
   vAccB.x += avoidX * 20;
   vAccB.z += avoidZ * 20;
-
+  var windF2 = getWindForce();
+  if (windF2 > 0) { vAccB.x += weatherState.wind.x * windF2 * 2.2; vAccB.z += weatherState.wind.y * windF2 * 2.2; }
   bot.vel.addScaledVector(vAccB, dt);
   bot.vel.multiplyScalar(Math.exp(-bot.droneType.drag * dt));
   var spB = bot.vel.length();
   if (spB > bot.droneType.maxSpeed) bot.vel.multiplyScalar(bot.droneType.maxSpeed / spB);
-
   bot.prev.copy(bot.pos);
   bot.pos.addScaledVector(bot.vel, dt);
-
-  // Земля
   if (bot.pos.y < 3) { bot.pos.y = 3; bot.vel.y = Math.max(0, bot.vel.y); }
-
-  // Крушение с ботом
   for (var bi2 = 0; bi2 < buildings.length; bi2++) {
     var bb = buildings[bi2]; if (!bb.alive) continue;
     if (bot.pos.y < bb.h + 0.5 && Math.abs(bot.pos.x - bb.x) < bb.hw + 0.5 && Math.abs(bot.pos.z - bb.z) < bb.hd + 0.5) {
@@ -2542,66 +2893,52 @@ function updateBot(bot, dt) {
       break;
     }
   }
-
-  // Меш
   bot.mesh.position.copy(bot.pos);
   bot.mesh.quaternion.copy(bot.quat);
-
-  // Пропеллеры
   var spinB = (15 + bot.vel.length() * 0.3) * dt;
   for (var pi = 0; pi < bot.props.length; pi++) {
     var pr = bot.props[pi];
     if (pr.mesh && pr.axis) pr.mesh.rotation[pr.axis] += spinB * (pr.dir || 1);
   }
 }
-
 function applyDamageToBot(bot, dmg, source) {
   if (!bot.alive) return;
   bot.hp -= dmg;
   if (bot.hp <= 0) {
-    bot.alive = false;
-    bot.hp = 0;
-    bot.deaths++;
+    bot.alive = false; bot.hp = 0; bot.deaths++;
     bot.respawnTimer = PVP_RESPAWN_TIME;
     bot.mesh.visible = false;
     spawnExplosion(bot.pos.clone(), bot.vel.clone(), 1.5);
-    // Начисление убийства
     if (source === 'player' || bot.lastHitBy === 'player') {
       pvp.myKills++;
-      if (bot.team === 'red') pvp.blueScore++;
-      else pvp.redScore++;
+      if (bot.team === 'red') pvp.blueScore++; else pvp.redScore++;
+      playChime(880, 0.2);
     } else {
-      if (bot.team === 'red') pvp.blueScore++;
-      else pvp.redScore++;
+      if (bot.team === 'red') pvp.blueScore++; else pvp.redScore++;
     }
-    updatePvPHUD();
-    checkPvPWin();
+    updatePvPHUD(); checkPvPWin();
   }
 }
-
 function playerTakeDamage(dmg, source) {
   if (pvp.respawnTimer > 0) return;
   if (cheats.god) return;
   pvp.myHp -= dmg;
   hitFlashEl.style.opacity = '1';
   setTimeout(function () { hitFlashEl.style.opacity = '0'; }, 180);
+  playHit();
   if (pvp.myHp <= 0) {
-    pvp.myHp = 0;
-    pvp.myDeaths++;
-    if (pvp.myTeam === 'red') pvp.blueScore++;
-    else pvp.redScore++;
+    pvp.myHp = 0; pvp.myDeaths++;
+    if (pvp.myTeam === 'red') pvp.blueScore++; else pvp.redScore++;
     pvp.respawnTimer = PVP_RESPAWN_TIME;
     spawnExplosion(drone.pos.clone(), drone.vel.clone(), 2.0);
     drone.vel.set(0, 0, 0);
-    drone.pos.set(0, -100, 0); // скрываем
+    drone.pos.set(0, -100, 0);
     droneMesh.visible = false;
-    updatePvPHUD();
-    showPvPMsg('УБИТ', '#ff4040');
+    updatePvPHUD(); showPvPMsg('УБИТ', '#ff4040');
     checkPvPWin();
   }
   updatePvPHUD();
 }
-
 function respawnPlayer() {
   var ang = Math.random() * Math.PI * 2;
   drone.pos.set(START_POS.x + Math.cos(ang) * 80, 20, START_POS.z + Math.sin(ang) * 80);
@@ -2613,7 +2950,6 @@ function respawnPlayer() {
   updatePvPHUD();
   showPvPMsg('В БОЙ', '#7cf7c0');
 }
-
 function updatePvPHUD() {
   document.getElementById('redScore').textContent = String(pvp.redScore);
   document.getElementById('blueScore').textContent = String(pvp.blueScore);
@@ -2631,17 +2967,14 @@ function updatePvPHUD() {
   else if (pvp.redScore >= PVP_WIN_KILLS || pvp.blueScore >= PVP_WIN_KILLS) st.textContent = 'МАТЧ ОКОНЧЕН';
   else st.textContent = 'СРАЖАЙСЯ';
 }
-
 var pvpMsgTimeout = null;
 function showPvPMsg(text, color) {
   var el = document.getElementById('pvpMsg');
-  el.textContent = text;
-  el.style.color = color;
+  el.textContent = text; el.style.color = color;
   el.classList.add('show');
   clearTimeout(pvpMsgTimeout);
   pvpMsgTimeout = setTimeout(function () { el.classList.remove('show'); }, 1500);
 }
-
 function checkPvPWin() {
   if (pvp.redScore >= PVP_WIN_KILLS || pvp.blueScore >= PVP_WIN_KILLS) {
     var won = (pvp.myTeam === 'red' && pvp.redScore >= PVP_WIN_KILLS) || (pvp.myTeam === 'blue' && pvp.blueScore >= PVP_WIN_KILLS);
@@ -2659,8 +2992,7 @@ function checkPvPWin() {
       btnEl.textContent = 'ЕЩЁ РАЗ'; btn2El.classList.remove('hidden');
       padsEl.classList.add('hidden'); fireBtnEl.classList.add('hidden');
       if (abilityBtnEl) abilityBtnEl.classList.add('hidden');
-      menuEl.classList.remove('hidden');
-      arrowEl.style.opacity = '0';
+      menuEl.classList.remove('hidden'); arrowEl.style.opacity = '0';
       document.body.classList.remove('pvp-mode');
       document.getElementById('pvpScore').classList.add('hidden');
       document.getElementById('hpWrap').classList.add('hidden');
@@ -2668,7 +3000,6 @@ function checkPvPWin() {
     }, 800);
   }
 }
-
 function startPvP(mode) {
   if (pvp.active) stopPvP();
   hideMPPanel();
@@ -2677,122 +3008,75 @@ function startPvP(mode) {
   pvp.mode = mode;
   pvp.myTeam = 'red';
   pvp.myHp = PVP_HP_MAX;
-  pvp.myKills = 0;
-  pvp.myDeaths = 0;
-  pvp.redScore = 0;
-  pvp.blueScore = 0;
-  pvp.matchTimer = 0;
-  pvp.respawnTimer = 0;
+  pvp.myKills = 0; pvp.myDeaths = 0;
+  pvp.redScore = 0; pvp.blueScore = 0;
+  pvp.matchTimer = 0; pvp.respawnTimer = 0;
   clearBots();
-
-  // Загружаем мир
   builtKey = '';
   ensureWorld();
   state = 'playing';
-
   var aiLvl = selDiff === 0 ? 1 : (selDiff === 1 ? 2 : 3);
-
-  // Создание ботов по режиму
-  if (mode === '1v1bot') {
-    pvp.enemies.push(createBot('blue', 'default', 'standard', aiLvl));
-  } else if (mode === '1v2bot') {
-    pvp.enemies.push(createBot('blue', 'default', 'standard', aiLvl));
-    pvp.enemies.push(createBot('blue', 'default', 'sport', aiLvl));
-  } else if (mode === '2v2bot') {
-    pvp.allies.push(createBot('red', 'default', 'sport', aiLvl));
-    pvp.enemies.push(createBot('blue', 'default', 'standard', aiLvl));
-    pvp.enemies.push(createBot('blue', 'default', 'sport', aiLvl));
-  } else if (mode === '1v1online' || mode === '2v2online') {
-    // Онлайн PvP — используем сеть
-    startOnlinePvP(mode);
-    return;
-  }
-
-  // Сброс позиции игрока
   drone.pos.set(START_POS.x, 20, START_POS.z + 20);
   drone.prev.copy(drone.pos);
   drone.vel.set(0, 0, 0);
   drone.quat.identity();
   input.throttle = getDrone().hover;
   droneMesh.visible = playerData.thirdPerson;
+  if (mode === '1v1bot') pvp.enemies.push(createBot('blue', 'default', 'standard', aiLvl));
+  else if (mode === '1v2bot') {
+    pvp.enemies.push(createBot('blue', 'default', 'standard', aiLvl));
+    pvp.enemies.push(createBot('blue', 'default', 'sport', aiLvl));
+  } else if (mode === '2v2bot') {
+    pvp.allies.push(createBot('red', 'default', 'sport', aiLvl));
+    pvp.enemies.push(createBot('blue', 'default', 'standard', aiLvl));
+    pvp.enemies.push(createBot('blue', 'default', 'sport', aiLvl));
+  } else if (mode === '1v1online' || mode === '2v2online') { startOnlinePvP(mode); return; }
   pvp.matchTimer = 0;
-
-  // UI
   document.body.classList.add('pvp-mode');
   document.getElementById('pvpScore').classList.remove('hidden');
   document.getElementById('hpWrap').classList.remove('hidden');
-  padsEl.classList.remove('hidden');
-  fireBtnEl.classList.remove('hidden');
+  padsEl.classList.remove('hidden'); fireBtnEl.classList.remove('hidden');
   if (abilityBtnEl && playerData.masteryEnabled) abilityBtnEl.classList.remove('hidden');
-  menuEl.classList.add('hidden');
-  arrowEl.style.opacity = '0';
-  updatePvPHUD();
-  showPvPMsg('В БОЙ', '#ffd040');
+  menuEl.classList.add('hidden'); arrowEl.style.opacity = '0';
+  updatePvPHUD(); showPvPMsg('В БОЙ', '#ffd040');
   lastT = performance.now();
 }
-
 function stopPvP() {
-  pvp.active = false;
-  pvp.mode = null;
-  pvp.respawnTimer = 0;
+  pvp.active = false; pvp.mode = null; pvp.respawnTimer = 0;
   clearBots();
   document.body.classList.remove('pvp-mode');
   document.getElementById('pvpScore').classList.add('hidden');
   document.getElementById('hpWrap').classList.add('hidden');
-  padsEl.classList.add('hidden');
-  fireBtnEl.classList.add('hidden');
+  padsEl.classList.add('hidden'); fireBtnEl.classList.add('hidden');
   if (abilityBtnEl) abilityBtnEl.classList.add('hidden');
   if (mpActive) leaveMultiplayer();
 }
-
-// ════════════════════════════════════════════════════════════
-//  ОНЛАЙН PVP
-// ════════════════════════════════════════════════════════════
 function startOnlinePvP(mode) {
-  // Упрощённая реализация: тот же MQTT, что и в сетевой игре, но помечен тегом 'pvp'
   var code = prompt('Введите код комнаты для ' + (mode === '1v1online' ? '1v1' : '2v2') + ' (4 символа):');
   if (!code || code.length !== 4) { stopPvP(); return; }
   code = code.toUpperCase();
-
   isHost = confirm('Создать новую комнату? OK — создать, Отмена — присоединиться.');
   myColorIdx = isHost ? 0 : 1;
   pvp.myTeam = isHost ? 'red' : 'blue';
-
   mqttConnect(function (err) {
     if (err) { toastMsg('Не удалось подключиться', true); stopPvP(); return; }
     mqttSubscribe('PVP_' + code, function (err2) {
       if (err2) { toastMsg('Ошибка подписки', true); stopPvP(); return; }
-      mpActive = true;
-      pvp.active = true;
-      pvp.mode = mode;
-      pvp.myHp = PVP_HP_MAX;
-      pvp.myKills = 0;
-      pvp.myDeaths = 0;
-      pvp.redScore = 0;
-      pvp.blueScore = 0;
-      pvp.matchTimer = 0;
-
-      builtKey = '';
-      ensureWorld();
-      state = 'playing';
-
+      mpActive = true; pvp.active = true; pvp.mode = mode;
+      pvp.myHp = PVP_HP_MAX; pvp.myKills = 0; pvp.myDeaths = 0;
+      pvp.redScore = 0; pvp.blueScore = 0; pvp.matchTimer = 0;
+      builtKey = ''; ensureWorld(); state = 'playing';
       drone.pos.set(START_POS.x, 20, START_POS.z + 20);
-      drone.prev.copy(drone.pos);
-      drone.vel.set(0, 0, 0);
-      drone.quat.identity();
+      drone.prev.copy(drone.pos); drone.vel.set(0, 0, 0); drone.quat.identity();
       input.throttle = getDrone().hover;
       droneMesh.visible = playerData.thirdPerson;
-
       document.body.classList.add('pvp-mode');
       document.getElementById('pvpScore').classList.remove('hidden');
       document.getElementById('hpWrap').classList.remove('hidden');
-      padsEl.classList.remove('hidden');
-      fireBtnEl.classList.remove('hidden');
+      padsEl.classList.remove('hidden'); fireBtnEl.classList.remove('hidden');
       if (abilityBtnEl && playerData.masteryEnabled) abilityBtnEl.classList.remove('hidden');
       menuEl.classList.add('hidden');
-      updatePvPHUD();
-      showPvPMsg('ЖДЁМ ИГРОКОВ', '#ffd040');
-
+      updatePvPHUD(); showPvPMsg('ЖДЁМ ИГРОКОВ', '#ffd040');
       mqttPublish({ t: 'pvp_join', id: myId, team: pvp.myTeam, skin: playerData.selectedSkin, dron: playerData.selectedDrone });
     });
   });
@@ -2809,15 +3093,13 @@ function loop(now) {
   if (rawDt > 0.05) rawDt = 0.05;
   if (cheats.slowmo) rawDt *= 0.4;
   var dt = rawDt;
-
   updateExplosion(dt);
   updateFragments(dt);
   updateProjectiles(dt);
   updateAbility(dt);
+  updateWeather(dt);
   if (state === 'playing' && !dying) updateMovingCars(dt);
   pulseT += dt;
-
-  // PvP логика
   if (pvp.active && state === 'playing') {
     pvp.matchTimer += dt;
     if (pvp.respawnTimer > 0) {
@@ -2829,18 +3111,18 @@ function loop(now) {
     updateBotProjectiles(dt);
     updatePvPHUD();
   }
-
   if (cheats.rainbow && !cheats.matrix) {
     var hue = (pulseT * 0.15) % 1;
     var col = new THREE.Color().setHSL(hue, 0.7, 0.5);
     scene.fog.color.copy(col); scene.background.copy(col);
   } else if (!cheats.matrix) {
-    if (scene.fog.color.getHex() !== THEMES[selTheme].sky) {
-      scene.fog.color.setHex(THEMES[selTheme].sky);
-      scene.background.setHex(THEMES[selTheme].sky);
+    var th0 = THEMES[selTheme]; var w0 = getWeather();
+    var skyC = new THREE.Color(th0.sky).multiplyScalar(w0.dark);
+    if (weatherState.flashT <= 0) {
+      scene.fog.color.copy(skyC);
+      if (scene.background && scene.background.isColor) scene.background.copy(skyC);
     }
   }
-
   if (mpActive && state === 'playing' && !dying) {
     sendTimer += dt;
     if (sendTimer >= SEND_RATE) { sendTimer = 0; sendState(); }
@@ -2860,7 +3142,6 @@ function loop(now) {
       if (rpr.mesh && rpr.axis) rpr.mesh.rotation[rpr.axis] += rspin * (rpr.dir || 1);
     }
   }
-
   if (state === 'playing') {
     if (dying) {
       dieTimer -= dt;
@@ -2889,7 +3170,6 @@ function loop(now) {
       }
     }
   }
-
   if (!dying && !vr.active && !(pvp.active && pvp.respawnTimer > 0)) {
     if (playerData.thirdPerson) updateThirdPersonCamera(dt);
     else { camera.position.copy(drone.pos); camera.quaternion.copy(drone.quat); }
@@ -2917,16 +3197,19 @@ function loop(now) {
     camera.fov += (tfov - camera.fov) * Math.min(1, dt * 4.5);
     camera.updateProjectionMatrix();
   }
+  updateAudioContinuous(
+    state === 'playing' && !dying ? input.throttle : 0,
+    state === 'playing' && !dying ? spd : 0,
+    state === 'playing' && !dying && pvp.respawnTimer <= 0
+  );
   if (state === 'playing' || state === 'paused') {
     if (!vr.active) updateHUD(spd);
     if (state === 'playing' && !dying && !vr.active) { drawMinimap(); updateGateArrow(); }
     else if (!vr.active) { arrowEl.style.opacity = '0'; drawMinimap(); }
   } else if (!vr.active) elThr.style.height = (input.throttle * 100) + '%';
-
   if (vr.active) renderVR();
   else renderer.render(scene, camera);
 }
-
 function ensureWorld() {
   var key = currentSeed + '|' + selDiff + '|' + selTheme + '|' + selMission + '|' + (pvp.active ? 'pvp' : '');
   if (key !== builtKey) { builtKey = key; buildWorld(); }
@@ -3099,7 +3382,7 @@ function mqttConnect(cb) {
     }
   });
 }
-function mqttSubscribe(room, cb) { currentRoom = 'fpvdrone_v21/' + room.toUpperCase(); mqttClient.subscribe(currentRoom, { qos: 0 }, function (err) { if (err) { cb(err); return; } cb(null); }); }
+function mqttSubscribe(room, cb) { currentRoom = 'fpvdrone_v22/' + room.toUpperCase(); mqttClient.subscribe(currentRoom, { qos: 0 }, function (err) { if (err) { cb(err); return; } cb(null); }); }
 function mqttPublish(obj) { if (!mqttClient || !currentRoom) return; try { mqttClient.publish(currentRoom, JSON.stringify(obj), { qos: 0, retain: false }); } catch (e) {} }
 function handleNet(data) {
   switch (data.t) {
@@ -3184,7 +3467,7 @@ function showMPRoom() { document.getElementById('mpChoose').classList.add('hidde
 function openMPPanel() { document.getElementById('mpPanel').classList.remove('hidden'); if (mpActive) showMPRoom(); else { showMPChoose(); setMPStatus(''); } }
 function hideMPPanel() { document.getElementById('mpPanel').classList.add('hidden'); }
 function setSettingsDisabled(disabled) {
-  ['missionRow','diffRow','themeRow'].forEach(function (id) {
+  ['missionRow','diffRow','themeRow','weatherRow'].forEach(function (id) {
     var row = document.getElementById(id); if (!row) return;
     row.querySelectorAll('.opt').forEach(function (b) { b.disabled = disabled; });
   });
@@ -3194,13 +3477,15 @@ function syncMenuButtons() {
   document.querySelectorAll('#missionRow .opt').forEach(function (o) { o.classList.toggle('active', o.dataset.mission === selMission); });
   document.querySelectorAll('#diffRow .opt').forEach(function (o) { o.classList.toggle('active', parseInt(o.dataset.diff, 10) === selDiff); });
   document.querySelectorAll('#themeRow .opt').forEach(function (o) { o.classList.toggle('active', parseInt(o.dataset.theme, 10) === selTheme); });
+  document.querySelectorAll('#weatherRow .opt').forEach(function (o) { o.classList.toggle('active', parseInt(o.dataset.weather, 10) === selWeather); });
   seedVal.textContent = String(currentSeed);
 }
 
 // UI HANDLERS
 document.querySelectorAll('#missionRow .opt').forEach(function (b) { b.addEventListener('click', function () { selMission = b.dataset.mission; document.querySelectorAll('#missionRow .opt').forEach(function (o) { o.classList.toggle('active', o === b); }); refreshBest(); }); });
 document.querySelectorAll('#diffRow .opt').forEach(function (b) { b.addEventListener('click', function () { selDiff = parseInt(b.dataset.diff, 10) || 0; document.querySelectorAll('#diffRow .opt').forEach(function (o) { o.classList.toggle('active', o === b); }); refreshBest(); }); });
-document.querySelectorAll('#themeRow .opt').forEach(function (b) { b.addEventListener('click', function () { selTheme = parseInt(b.dataset.theme, 10) || 0; document.querySelectorAll('#themeRow .opt').forEach(function (o) { o.classList.toggle('active', o === b); }); }); });
+document.querySelectorAll('#themeRow .opt').forEach(function (b) { b.addEventListener('click', function () { selTheme = parseInt(b.dataset.theme, 10) || 0; document.querySelectorAll('#themeRow .opt').forEach(function (o) { o.classList.toggle('active', o === b); }); applyWeather(); }); });
+document.querySelectorAll('#weatherRow .opt').forEach(function (b) { b.addEventListener('click', function () { selWeather = parseInt(b.dataset.weather, 10) || 0; document.querySelectorAll('#weatherRow .opt').forEach(function (o) { o.classList.toggle('active', o === b); }); applyWeather(); }); });
 document.querySelectorAll('.shop-tab').forEach(function (tab) { tab.addEventListener('click', function () { shopTab = tab.dataset.tab; document.querySelectorAll('.shop-tab').forEach(function (t) { t.classList.toggle('active', t === tab); }); renderShop(); }); });
 function newSeed() { currentSeed = (Math.random() * 1e9) | 0; seedVal.textContent = String(currentSeed); }
 seedVal.textContent = String(currentSeed);
@@ -3211,6 +3496,11 @@ function refreshMasteryToggleUI() {
   if (playerData.masteryEnabled) { btn.textContent = '⭐ МАСТЕРСТВО: ВКЛ'; btn.classList.add('active'); btn.style.borderColor = ''; btn.style.color = ''; }
   else { btn.textContent = '⭐ МАСТЕРСТВО: ВЫКЛ'; btn.classList.remove('active'); btn.style.borderColor = 'rgba(255,90,80,.6)'; btn.style.color = '#ff9090'; }
 }
+function refreshSoundToggleUI() {
+  var btn = document.getElementById('soundToggle'); if (!btn) return;
+  if (soundEnabled) { btn.textContent = '🔊 ЗВУК: ВКЛ'; btn.classList.add('active'); btn.style.borderColor = ''; btn.style.color = ''; }
+  else { btn.textContent = '🔇 ЗВУК: ВЫКЛ'; btn.classList.remove('active'); btn.style.borderColor = 'rgba(255,90,80,.6)'; btn.style.color = '#ff9090'; }
+}
 document.getElementById('masteryToggle').addEventListener('click', function (e) {
   e.preventDefault();
   playerData.masteryEnabled = !playerData.masteryEnabled;
@@ -3218,16 +3508,23 @@ document.getElementById('masteryToggle').addEventListener('click', function (e) 
   applySkin(); updateMasteryUI(); updateAbilityUI(); updateThrMark();
   toastMsg('Мастерство: ' + (playerData.masteryEnabled ? 'ВКЛ' : 'ВЫКЛ'));
 });
+document.getElementById('soundToggle').addEventListener('click', function (e) {
+  e.preventDefault();
+  setSoundEnabled(!soundEnabled);
+  refreshSoundToggleUI();
+  toastMsg('Звук: ' + (soundEnabled ? 'ВКЛ' : 'ВЫКЛ'));
+  if (soundEnabled) playChime(880, 0.1);
+});
 refreshMasteryToggleUI();
+soundEnabled = playerData.soundEnabled !== false;
+refreshSoundToggleUI();
 
 btnEl.addEventListener('click', function (e) { e.preventDefault(); startGame(); });
 btn2El.addEventListener('click', function (e) { e.preventDefault(); newSeed(); startGame(); });
 document.getElementById('vrBtn').addEventListener('click', function (e) { e.preventDefault(); enterVR(); });
 document.getElementById('pvpBtn').addEventListener('click', function (e) { e.preventDefault(); document.getElementById('pvpPanel').classList.remove('hidden'); });
 document.getElementById('pvpClose').addEventListener('click', function () { document.getElementById('pvpPanel').classList.add('hidden'); });
-document.querySelectorAll('[data-pvp]').forEach(function (b) {
-  b.addEventListener('click', function () { startPvP(b.dataset.pvp); });
-});
+document.querySelectorAll('[data-pvp]').forEach(function (b) { b.addEventListener('click', function () { startPvP(b.dataset.pvp); }); });
 document.getElementById('shopBtn').addEventListener('click', function (e) { e.preventDefault(); openShop(); });
 document.getElementById('shopClose').addEventListener('click', function (e) { e.preventDefault(); closeShop(); });
 document.getElementById('helpBtn').addEventListener('click', function (e) { e.preventDefault(); helpEl.classList.remove('hidden'); });
@@ -3294,17 +3591,20 @@ document.addEventListener('visibilitychange', function () {
 // START
 try {
   loadPlayerData();
+  soundEnabled = playerData.soundEnabled !== false;
   initFragments();
   initExplosion();
   initProjectiles();
   ensureWorld();
   applySkin();
+  applyWeather();
   updateViewBtn();
   updateCoinsUI();
   refreshBest();
   updateMasteryUI();
   updateAbilityUI();
   refreshMasteryToggleUI();
+  refreshSoundToggleUI();
   initVRCameras();
   camera.position.copy(START_POS);
   camera.quaternion.copy(drone.quat);
